@@ -4,21 +4,21 @@ import javax.swing.SwingUtilities;
 
 import model.GameEngineImpl;
 import model.interfaces.GameEngine;
-import view.DiceGameFrame;
+import view.DiceFrame;
+import view.GameEngineCallbackGUI;
+import view.GameEngineCallbackImpl;
 
 public class DiceGameApp
 {
 	public static void main(String[] args)
-	{
-		final GameEngine model = new GameEngineImpl();
+	{		
 		SwingUtilities.invokeLater(new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				new DiceGameFrame(model);
+				new DiceFrame();
 			}
 		});
 	}
-	// research model view view model (MVVM)
 }
