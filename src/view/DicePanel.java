@@ -1,37 +1,38 @@
 package view;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import javax.swing.JPanel;
 
-import model.interfaces.GameEngine;
+import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class DicePanel extends JPanel
-{
+{	
+	DiceFrame frame;
 	DieGraphic die1 = new DieGraphic(4);
 	DieGraphic die2 = new DieGraphic(2);
+
 	
 	public DicePanel(DiceFrame frame)
 	{
+		this.frame = frame;
+		
 		setPreferredSize(new Dimension(1000, 500));
-		setLayout(new GridLayout(0, 2, 10, 10));
+		setLayout(new GridLayout(0, 2));
 		
 		add(die1);
 		add(die2);
+		repaint();
 	}
 
-	public void setDie1Graphic(DieGraphic die)
+	public DieGraphic getDie1()
 	{
-		die1 = die;
-		revalidate();
-		repaint();
+		return die1;
 	}
 	
-	public void setDie2Graphic(DieGraphic die)
+	public DieGraphic getDie2()
 	{
-		die2 = die;
-		revalidate();
-		repaint();
+		return die2;
 	}
 }

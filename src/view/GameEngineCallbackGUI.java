@@ -1,5 +1,7 @@
 package view;
 
+import javax.swing.SwingUtilities;
+
 import model.interfaces.DicePair;
 import model.interfaces.Die;
 import model.interfaces.GameEngine;
@@ -18,15 +20,24 @@ public class GameEngineCallbackGUI implements GameEngineCallback
 	@Override
 	public void playerDieUpdate(Player player, Die die, GameEngine gameEngine)
 	{
-		if (die.getNumber() == 1)
+		SwingUtilities.invokeLater(new Runnable()
 		{
-			frame.getDicePanel().setDie1Graphic(new DieGraphic(die.getValue()));
-		}
-		
-		if (die.getNumber() == 2)
-		{
-			frame.getDicePanel().setDie2Graphic(new DieGraphic(die.getValue()));
-		}
+			@Override
+			public void run()
+			{
+				if (die.getNumber() == 1)
+				{
+					frame.getDicePanel().getDie1().setValue(die.getValue());
+				}
+				
+				if (die.getNumber() == 2)
+				{
+					frame.getDicePanel().getDie2().setValue(die.getValue());
+				}
+
+				frame.repaint();
+			}
+		});
 	}
 
 	@Override

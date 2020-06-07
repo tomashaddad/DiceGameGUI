@@ -8,6 +8,8 @@ public class DieGraphic extends JPanel
 {
 	private int value;
 	
+	private final Color CASINO_GREEN = Color.decode("#35654d");
+	
 	// these values are arbitrary
 	private final double BORDER_MULTIPLIER = 0.03;
 	private final double ARC_MULTIPLIER = 0.3;
@@ -17,6 +19,7 @@ public class DieGraphic extends JPanel
 	public DieGraphic(int value)
 	{
 		this.value = value;
+		setBackground(CASINO_GREEN);
 	}
 
 	public void paintComponent(Graphics g)
@@ -26,15 +29,15 @@ public class DieGraphic extends JPanel
 		die.setStroke(new BasicStroke(getBorderThickness()));
 		
 		// needed to make corner arcs smooth
-		die.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-
-		drawDieBorder(die);
+		die.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		drawEmptyDie(die);
 		drawDieDots(die);
 	}
 
 	// TODO: Achieving even padding? Inner padding is twice the outer padding ...
 	
-	private void drawDieBorder(Graphics2D g)
+	private void drawEmptyDie(Graphics2D g)
 	{
 		/* The border's thickness is not accounted for in the graphic's margins, so the die's
 		 * length must be shrunk by some multiplier in order to show all borders */
@@ -43,7 +46,15 @@ public class DieGraphic extends JPanel
 		/* The graphic is centred according to its top-left corner.  */
 		int correctedXPos = (getWidth() - correctedSideLength) / 2;
 		int correctedYPos = (getHeight() - correctedSideLength) / 2;
+		
+		g.setColor(Color.WHITE);
+		
+		g.fillRoundRect(correctedXPos, correctedYPos,
+				correctedSideLength, correctedSideLength,
+				getCornerArc(), getCornerArc());
 
+		g.setColor(Color.BLACK);
+		
 		g.drawRoundRect(correctedXPos, correctedYPos,
 				correctedSideLength, correctedSideLength,
 				getCornerArc(), getCornerArc());
@@ -91,5 +102,15 @@ public class DieGraphic extends JPanel
 	private int getDotSize()
 	{
 		return (int) (sideLength() * DOT_MULTIPLIER);
+	}
+	
+	public int getValue()
+	{
+		return value;
+	}
+	
+	public void setValue(int value)
+	{
+		this.value = value;
 	}
 }
