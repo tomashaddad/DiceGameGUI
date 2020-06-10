@@ -1,53 +1,96 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
+import javax.swing.ListSelectionModel;
+
+import constants.Events;
+import controller.GameController;
+import model.SimplePlayer;
+import model.interfaces.Player;
 
 // reference: https://stackoverflow.com/questions/38021262/how-to-dynamically-add-elements-to-a-jscrollpanel
 
 @SuppressWarnings("serial")
-public class DiceSummaryPanel extends JPanel
+public class DiceSummaryPanel extends JPanel implements PropertyChangeListener
 {
-	private DiceFrame frame;
-	private JPanel innerPanel;
+	private GameController gameController;
+	private JPanel playerPanels;
+	
+	private Player[] dummyPlayerArray = {new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100),
+			new SimplePlayer("1", "Tomas", 100)};
 
-	public DiceSummaryPanel(DiceFrame diceFrame)
+	public DiceSummaryPanel(GameController gameController)
 	{
-		this.frame = diceFrame;
+		this.gameController = gameController;
+		
+		gameController.addListener(this);
+
 		setLayout(new BorderLayout());
+		setPreferredSize(new Dimension(300, 0));
+		
+		String[] names = {"Tomas", "Karl", "Ross", "Caspar"};
+		
+		JList<Player> list = new JList<>(dummyPlayerArray);
+		
+		list.setCellRenderer(new JListPlayerRenderer());
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		list.getModel().getElementAt(0).setPoints(20);
+		
+		add(new JScrollPane(list), BorderLayout.CENTER);
 
-		this.setPreferredSize(new Dimension(300, 0));
-
-		add(createScrollPane(), BorderLayout.CENTER);
-
-		addScrollPaneItem(new SinglePlayerSummary("Tom", 1000, 300));
+//		add(createScrollPane(), BorderLayout.CENTER);
 	}
 
-	public JScrollPane createScrollPane()
+	/*
+	 * Wrapper JPanel is contained in JScrollPane as north-aligned BorderLayout.
+	 * Without the wrapper, any players added to the inner panel will stretch
+	 * vertically to evenly fill height
+	 */
+	
+	private JScrollPane createScrollPane()
 	{
-
-		/*
-		 * Wrapper JPanel is contained in JScrollPane as north-aligned BorderLayout.
-		 * Without the wrapper, any panels added to the inner panel will stretch
-		 * vertically to evenly fill height
-		 */
-
 		JPanel wrapperPanel = new JPanel(new BorderLayout());
 		wrapperPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-		innerPanel = new JPanel(new GridLayout(0, 1, 10, 10));
-		wrapperPanel.add(innerPanel, BorderLayout.NORTH);
+		playerPanels = new JPanel(new GridLayout(0, 1, 10, 10));
+		wrapperPanel.add(playerPanels, BorderLayout.NORTH);
 
 		JScrollPane scrollPane = new JScrollPane(wrapperPanel);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -55,13 +98,22 @@ public class DiceSummaryPanel extends JPanel
 		return scrollPane;
 	}
 
-	public void addScrollPaneItem(JPanel item)
+	private void addScrollPaneItem(JPanel item)
 	{
-		innerPanel.add(item);
+		playerPanels.add(item);
+		revalidate();
 	}
 
-	public JPanel getInnerPanel()
+	@Override
+	public void propertyChange(PropertyChangeEvent evt)
 	{
-		return innerPanel;
+		if(evt.getPropertyName() == Events.PLAYER_ADDED)
+		{
+			Player newPlayer = (SimplePlayer) evt.getNewValue();
+			String name = newPlayer.getPlayerName();
+			int points = newPlayer.getPoints();
+
+			addScrollPaneItem(new SinglePlayerSummary(name, points, 300));
+		}
 	}
 }

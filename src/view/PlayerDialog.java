@@ -1,10 +1,21 @@
 package view;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 
 import controller.AddPlayerListener;
 import controller.CancelDialogListener;
+import controller.GameController;
 
 @SuppressWarnings("serial")
 public class PlayerDialog extends JDialog
@@ -12,19 +23,19 @@ public class PlayerDialog extends JDialog
 	private JTextField usernameInput;
 	private JSpinner pointsInput;
 
-	public PlayerDialog(DiceFrame frame)
+	public PlayerDialog(JFrame frame, GameController gameController)
 	{
-		super(frame, "Add new player", ModalityType.APPLICATION_MODAL);
+		super(frame, "Add new player", false);
 		
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		
-		usernameInput = new JTextField(20);
+		usernameInput = new JTextField();
 		pointsInput = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
 		JButton okButton = new JButton("OK");
 		JButton cancelButton = new JButton("Cancel");
 		
-		okButton.addActionListener(new AddPlayerListener(this, frame));
+		okButton.addActionListener(new AddPlayerListener(this, gameController));
 		cancelButton.addActionListener(new CancelDialogListener(this));
 		
 		// 3 row, 4 column grid

@@ -9,18 +9,19 @@ import javax.swing.JComboBox;
 import javax.swing.JToolBar;
 
 import controller.AddPlayerDialogListener;
+import controller.GameController;
 import controller.RollListener;
 
 @SuppressWarnings("serial")
 public class DiceToolbar extends JToolBar
 {
-	private DiceFrame frame;
+	private GameController gameController;
 
-	public DiceToolbar(DiceFrame frame)
+	public DiceToolbar(GameController gameController)
 	{
 		super("Dice Game Toolbar");
 		
-		this.frame = frame;
+		this.gameController = gameController;
 		
 		setBackground(Color.decode("#B8C4BB"));
 		setBorder(BorderFactory.createLineBorder(Color.WHITE, 5));
@@ -33,13 +34,12 @@ public class DiceToolbar extends JToolBar
 		JComboBox<String> playerList = new JComboBox<>(playerNames);
 		playerList.setSelectedIndex(0);
 		
-		rollDiceButton.addActionListener(new RollListener(frame.getGameEngine()));
-		addPlayerButton.addActionListener(new AddPlayerDialogListener(frame));
+		rollDiceButton.addActionListener(new RollListener(gameController));
+		addPlayerButton.addActionListener(new AddPlayerDialogListener(gameController));
 		
 		add(rollDiceButton);
 		add(setBetButton);
 		add(addPlayerButton);
 		add(playerList);
 	}
-
 }

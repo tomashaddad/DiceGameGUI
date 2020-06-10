@@ -5,16 +5,18 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import model.interfaces.GameEngine;
+import controller.GameController;
 
 @SuppressWarnings("serial")
-public class DiceStatus extends JPanel
+public class DiceStatusBar extends JPanel
 {
+	GameController gameController;
 
-	public DiceStatus(GameEngine model)
+	public DiceStatusBar(GameController gameController)
 	{
 		setBackground(Color.decode("#B8C4BB"));
 		setBorder(BorderFactory.createLineBorder(Color.WHITE, 5));
+		
+		this.gameController = gameController;
 	}
-
 }

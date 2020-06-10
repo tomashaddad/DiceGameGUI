@@ -10,16 +10,17 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 
+import controller.GameController;
 import model.GameEngineImpl;
-import model.interfaces.GameEngine;
 
 @SuppressWarnings("serial")
 public class DiceFrame extends JFrame
 {
-	private final GameEngine model = new GameEngineImpl();
-	private DicePanel dicePanel = new DicePanel(this);
-	private DiceToolbar diceToolbar = new DiceToolbar(this);
-	private DiceSummaryPanel diceSummaryPanel = new DiceSummaryPanel(this);
+	private GameController gameController;
+	private DicePanel dicePanel;
+	private DiceToolbar diceToolbar;
+	private DiceSummaryPanel diceSummaryPanel;
+	private DiceStatusBar diceStatus;
 
 	public DiceFrame()
 	{
@@ -27,9 +28,15 @@ public class DiceFrame extends JFrame
 		
 		// enable or disable GUI logging for debugging
 		disableGUILogger(true);
-
-		model.addGameEngineCallback(new GameEngineCallbackImpl());
-		model.addGameEngineCallback(new GameEngineCallbackGUI(this));
+		
+		gameController = new GameController(new GameEngineImpl());				
+		gameController.addGameEngineCallback(new GameEngineCallbackImpl());
+		gameController.addGameEngineCallback(new GameEngineCallbackGUI(this));
+		
+		dicePanel = new DicePanel(gameController);
+		diceToolbar = new DiceToolbar(gameController);
+		diceSummaryPanel = new DiceSummaryPanel(gameController);
+		diceStatus = new DiceStatusBar(gameController);
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
@@ -39,23 +46,18 @@ public class DiceFrame extends JFrame
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int width = (int) screenSize.getWidth();
 		int height = (int) screenSize.getHeight();
-		setPreferredSize(new Dimension(width / 2, height / 2));
+		setPreferredSize(new Dimension(width / 2, height / 2)); 
 
 		setJMenuBar(new GameMenu());
 
 		add(diceToolbar, BorderLayout.NORTH);
 		add(diceSummaryPanel, BorderLayout.WEST);
 		add(dicePanel, BorderLayout.CENTER);
-		add(new DiceStatus(model), BorderLayout.SOUTH);
+		add(diceStatus, BorderLayout.SOUTH);
 
 		pack();
 		setLocationRelativeTo(null);
 		setVisible(true);
-	}
-
-	public GameEngine getGameEngine()
-	{
-		return model;
 	}
 
 	public DicePanel getDicePanel()

@@ -3,29 +3,29 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import view.DiceFrame;
+import model.SimplePlayer;
 import view.PlayerDialog;
 import view.SinglePlayerSummary;
 
 public class AddPlayerListener implements ActionListener
 {
-	private PlayerDialog playerDialog;
-	private DiceFrame frame;
+	private PlayerDialog dialog;
+	private GameController gameController;
 
-	public AddPlayerListener(PlayerDialog playerDialog, DiceFrame frame)
+	public AddPlayerListener(PlayerDialog dialog, GameController gameController)
 	{
-		this.playerDialog = playerDialog;
-		this.frame = frame;
+		this.gameController = gameController;
+		this.dialog = dialog;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		frame.getDiceSummaryPanel().getInnerPanel()
-				.add(new SinglePlayerSummary(playerDialog.getUsername(), playerDialog.getPoints(), 0));
-		frame.revalidate();
-		frame.repaint();
+		String playerName = dialog.getUsername();
+		int points = dialog.getPoints();
+		
+		gameController.addPlayer(playerName, points);
 
-		playerDialog.setVisible(false);
+		dialog.setVisible(false);
 	}
 }

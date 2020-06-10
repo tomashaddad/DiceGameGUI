@@ -13,8 +13,8 @@ public class DieGraphic extends JPanel
 	// these values are arbitrary
 	private final double BORDER_MULTIPLIER = 0.03;
 	private final double ARC_MULTIPLIER = 0.3;
-	private final double SIDELENGTH_MULTIPLIER = 0.9;
 	private final double DOT_MULTIPLIER = 0.15;
+	private final double SCALING_MULTIPLIER = 0.9;
 
 	public DieGraphic(int value)
 	{
@@ -31,32 +31,33 @@ public class DieGraphic extends JPanel
 		// needed to make corner arcs smooth
 		die.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
+		double translation = sideLength()*(1-SCALING_MULTIPLIER)/2; // leftover pixels after scaling /2
+		die.translate(translation, translation);
+		die.scale(SCALING_MULTIPLIER, SCALING_MULTIPLIER);
+		
 		drawEmptyDie(die);
 		drawDieDots(die);
 	}
 
-	// TODO: Achieving even padding? Inner padding is twice the outer padding ...
-	
 	private void drawEmptyDie(Graphics2D g)
 	{
-		/* The border's thickness is not accounted for in the graphic's margins, so the die's
-		 * length must be shrunk by some multiplier in order to show all borders */
-		int correctedSideLength = (int) (sideLength()*SIDELENGTH_MULTIPLIER);
-
-		/* The graphic is centred according to its top-left corner.  */
-		int correctedXPos = (getWidth() - correctedSideLength) / 2;
-		int correctedYPos = (getHeight() - correctedSideLength) / 2;
+		// The graphic is centred according to its top-left corner.
+		
+		int correctedXPos = (getWidth() - sideLength()) / 2;
+		int correctedYPos = (getHeight() - sideLength()) / 2;
+		
+		// Necessary to draw white background
 		
 		g.setColor(Color.WHITE);
 		
 		g.fillRoundRect(correctedXPos, correctedYPos,
-				correctedSideLength, correctedSideLength,
+				sideLength(), sideLength(),
 				getCornerArc(), getCornerArc());
 
 		g.setColor(Color.BLACK);
 		
 		g.drawRoundRect(correctedXPos, correctedYPos,
-				correctedSideLength, correctedSideLength,
+				sideLength(), sideLength(),
 				getCornerArc(), getCornerArc());
 	}
 	
@@ -80,10 +81,10 @@ public class DieGraphic extends JPanel
 			int dy = (int) (dot.getY()*dieGridSize - dotRadius);
 			g.fillOval(centreX + dx, centreY + dy, getDotSize(), getDotSize());
 		}
-		
 	}
 
-	/* Sets the template die side length to the minimum side length of its container */
+	/* Sets the template die side length to the minimum side length of its container
+	 * All dice dimensional attributes (below) are dependent on this! */
 	private int sideLength()
 	{
 		return getWidth() <= getHeight() ? getWidth() : getHeight();

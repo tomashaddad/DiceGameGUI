@@ -3,30 +3,27 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import view.DiceFrame;
 import view.PlayerDialog;
 
 public class AddPlayerDialogListener implements ActionListener
 {
-	DiceFrame frame;
+	GameController gameController;
 
-	public AddPlayerDialogListener(DiceFrame frame)
+	public AddPlayerDialogListener(GameController gameController)
 	{
-		this.frame = frame;
+		this.gameController = gameController;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				new PlayerDialog(frame).setVisible(true);
-			}
-		});
+		JButton button = (JButton) e.getSource();
+		JFrame frame = (JFrame) SwingUtilities.getRoot(button);
+		
+		new PlayerDialog(frame, gameController).setVisible(true);
 	}
 }

@@ -8,11 +8,11 @@ import model.interfaces.GameEngine;
 
 public class RollListener implements ActionListener
 {
-	private GameEngine model;
+	private GameController gameController;
 	
-	public RollListener(GameEngine model)
+	public RollListener(GameController gameController)
 	{
-		this.model = model;
+		this.gameController = gameController;
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class RollListener implements ActionListener
 			@Override
 			public void run()
 			{
-				model.rollPlayer(new SimplePlayer("1", "The Roller", 5000), 100, 1000, 100, 50, 500, 50);
+				gameController.rollPlayer(new SimplePlayer("1", "The Roller", 5000));
 			}
 		}.start();
 	}
