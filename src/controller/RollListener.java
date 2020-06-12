@@ -3,16 +3,17 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import controller.manager.EventManager;
 import model.SimplePlayer;
 import model.interfaces.GameEngine;
 
 public class RollListener implements ActionListener
 {
-	private GameController gameController;
+	private EventManager gameController;
 	
-	public RollListener(GameController gameController)
+	public RollListener(EventManager eventManager)
 	{
-		this.gameController = gameController;
+		this.gameController = eventManager;
 	}
 
 	@Override

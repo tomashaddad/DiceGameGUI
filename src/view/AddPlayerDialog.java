@@ -10,32 +10,39 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
 import controller.AddPlayerListener;
 import controller.CancelDialogListener;
-import controller.GameController;
+import controller.manager.EventManager;
 
 @SuppressWarnings("serial")
-public class PlayerDialog extends JDialog
+public class AddPlayerDialog extends JDialog
 {
 	private JTextField usernameInput;
 	private JSpinner pointsInput;
+	private JSpinner betInput;
 
-	public PlayerDialog(JFrame frame, GameController gameController)
+	public AddPlayerDialog(JFrame frame, EventManager eventManager)
 	{
 		super(frame, "Add new player", false);
 		
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		
-		usernameInput = new JTextField();
-		pointsInput = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+		SpinnerModel pointModel = new SpinnerNumberModel(0, 0, null, 1);
+		SpinnerModel betModel = new SpinnerNumberModel(0, 0, null, 1);
+
+		usernameInput = new JTextField("Ross Nye");
+		pointsInput = new JSpinner(pointModel);
+		betInput = new JSpinner(betModel);
 		JButton okButton = new JButton("OK");
 		JButton cancelButton = new JButton("Cancel");
 		
-		okButton.addActionListener(new AddPlayerListener(this, gameController));
+		
+		okButton.addActionListener(new AddPlayerListener(this, eventManager));
 		cancelButton.addActionListener(new CancelDialogListener(this));
 		
 		// 3 row, 4 column grid
@@ -55,6 +62,9 @@ public class PlayerDialog extends JDialog
 		gbc.gridy = 1;
 		add(new JLabel("Initial points: ", SwingConstants.RIGHT), gbc);
 		
+		gbc.gridx = 0;
+		gbc.gridy = 2;
+		add(new JLabel("Bet: ", SwingConstants.RIGHT), gbc);
 
 		gbc.anchor = GridBagConstraints.LINE_START;
 		gbc.gridwidth = 3;
@@ -66,15 +76,19 @@ public class PlayerDialog extends JDialog
 		gbc.gridx = 1;
 		gbc.gridy = 1;
 		add(pointsInput, gbc);
+		
+		gbc.gridx = 1;
+		gbc.gridy = 2;
+		add(betInput, gbc);
 
 		gbc.gridwidth = 1;
 		
 		gbc.gridx = 2;
-		gbc.gridy = 2;
+		gbc.gridy = 3;
 		add(okButton, gbc);
 		
 		gbc.gridx = 3;
-		gbc.gridy = 2;
+		gbc.gridy = 3;
 		add(cancelButton, gbc);
 
 		pack();
@@ -90,5 +104,10 @@ public class PlayerDialog extends JDialog
 	public int getPoints()
 	{
 		return (int) pointsInput.getValue();
+	}
+
+	public int getBet()
+	{
+		return (int) betInput.getValue();
 	}
 }

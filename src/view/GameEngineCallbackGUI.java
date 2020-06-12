@@ -2,6 +2,7 @@ package view;
 
 import javax.swing.SwingUtilities;
 
+import controller.manager.EventManager;
 import model.interfaces.DicePair;
 import model.interfaces.Die;
 import model.interfaces.GameEngine;
@@ -10,11 +11,11 @@ import view.interfaces.GameEngineCallback;
 
 public class GameEngineCallbackGUI implements GameEngineCallback
 {
-	private DiceFrame frame;
+	private EventManager eventManager;
 	
-	public GameEngineCallbackGUI(DiceFrame frame)
+	public GameEngineCallbackGUI(EventManager eventManager)
 	{
-		this.frame = frame;
+		this.eventManager = eventManager;
 	}
 	
 	@Override
@@ -25,17 +26,7 @@ public class GameEngineCallbackGUI implements GameEngineCallback
 			@Override
 			public void run()
 			{
-				if (die.getNumber() == 1)
-				{
-					frame.getDicePanel().getDie1().setValue(die.getValue());
-				}
-				
-				if (die.getNumber() == 2)
-				{
-					frame.getDicePanel().getDie2().setValue(die.getValue());
-				}
-
-				frame.repaint();
+				eventManager.updatePlayerDie(player, die);
 			}
 		});
 	}

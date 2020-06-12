@@ -8,15 +8,17 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import controller.manager.EventManager;
-import view.AddPlayerDialog;
+import model.interfaces.Player;
 
-public class AddPlayerDialogListener implements ActionListener
+public class RemovePlayerDialogListener implements ActionListener
 {
 	EventManager eventManager;
-
-	public AddPlayerDialogListener(EventManager eventManager)
+	Player player;
+	
+	public RemovePlayerDialogListener(EventManager eventManager, Player player)
 	{
 		this.eventManager = eventManager;
+		this.player = player;
 	}
 
 	@Override
@@ -25,6 +27,6 @@ public class AddPlayerDialogListener implements ActionListener
 		JButton button = (JButton) e.getSource();
 		JFrame frame = (JFrame) SwingUtilities.getRoot(button);
 		
-		new AddPlayerDialog(frame, eventManager).setVisible(true);
+//		new RemovePlayerDialog(frame, eventManager).setVisible(true);
 	}
 }

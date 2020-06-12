@@ -10,14 +10,14 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 
-import controller.GameController;
+import controller.manager.EventManager;
 import model.GameEngineImpl;
 
 @SuppressWarnings("serial")
 public class DiceFrame extends JFrame
 {
-	private GameController gameController;
-	private DicePanel dicePanel;
+	private EventManager eventManager;
+	private GamePanel gamePanel;
 	private DiceToolbar diceToolbar;
 	private DiceSummaryPanel diceSummaryPanel;
 	private DiceStatusBar diceStatus;
@@ -29,14 +29,14 @@ public class DiceFrame extends JFrame
 		// enable or disable GUI logging for debugging
 		disableGUILogger(true);
 		
-		gameController = new GameController(new GameEngineImpl());				
-		gameController.addGameEngineCallback(new GameEngineCallbackImpl());
-		gameController.addGameEngineCallback(new GameEngineCallbackGUI(this));
+		eventManager = new EventManager(new GameEngineImpl());				
+		eventManager.getGameEngine().addGameEngineCallback(new GameEngineCallbackImpl());
+		eventManager.getGameEngine().addGameEngineCallback(new GameEngineCallbackGUI(eventManager));
 		
-		dicePanel = new DicePanel(gameController);
-		diceToolbar = new DiceToolbar(gameController);
-		diceSummaryPanel = new DiceSummaryPanel(gameController);
-		diceStatus = new DiceStatusBar(gameController);
+		gamePanel = new GamePanel(eventManager);
+		diceToolbar = new DiceToolbar(eventManager);
+		diceSummaryPanel = new DiceSummaryPanel(eventManager);
+		diceStatus = new DiceStatusBar(eventManager);
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
@@ -50,9 +50,8 @@ public class DiceFrame extends JFrame
 
 		setJMenuBar(new GameMenu());
 
-		add(diceToolbar, BorderLayout.NORTH);
 		add(diceSummaryPanel, BorderLayout.WEST);
-		add(dicePanel, BorderLayout.CENTER);
+		add(gamePanel, BorderLayout.CENTER);
 		add(diceStatus, BorderLayout.SOUTH);
 
 		pack();
@@ -60,9 +59,9 @@ public class DiceFrame extends JFrame
 		setVisible(true);
 	}
 
-	public DicePanel getDicePanel()
+	public DicePanel getGamePanel()
 	{
-		return dicePanel;
+		return gamePanel.getDicePanel();
 	}
 
 	public DiceToolbar getDiceToolbar()

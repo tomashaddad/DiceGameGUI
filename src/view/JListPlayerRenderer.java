@@ -15,6 +15,7 @@ import javax.swing.border.TitledBorder;
 
 import model.interfaces.Player;
 
+@SuppressWarnings("serial")
 public class JListPlayerRenderer extends JPanel implements ListCellRenderer<Player>
 {
 	private String name = "Placeholder";
@@ -24,7 +25,6 @@ public class JListPlayerRenderer extends JPanel implements ListCellRenderer<Play
 	
 	public JListPlayerRenderer()
 	{
-		setOpaque(true);
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 		setBackground(Color.WHITE);
@@ -35,47 +35,43 @@ public class JListPlayerRenderer extends JPanel implements ListCellRenderer<Play
 	}
 	
 	@Override
-	public Component getListCellRendererComponent(JList<? extends Player> list, Player value, int index,
+	public Component getListCellRendererComponent(JList<? extends Player> list, Player player, int index,
 			boolean isSelected, boolean cellHasFocus)
 	{
-		name = value.getPlayerName();
-		points.setText("Points: " + Integer.toString(value.getPoints()));
+		name = player.getPlayerName();
+		points.setText("Points: " + Integer.toString(player.getPoints()));
+		bet.setText("Bet: " + Integer.toString(player.getBet()));
 		
-//		if (isSelected)
-//		{
-//			setBackground(list.getSelectionBackground());
-//			setForeground(list.getSelectionForeground());
-//		}
-//		
-//		else
-//		{
-//			setBackground(list.getBackground());
-//			setForeground(list.getForeground());
-//		}
+		if (isSelected)
+			setBackground(Color.decode("#e6ebe6"));
+		else
+			setBackground(Color.WHITE);
 		
-		setFont(list.getFont());
-		
-		setEnabled(list.isEnabled());
 		
 		if (isSelected && cellHasFocus)
-		{
-			setBorder(BorderFactory.createCompoundBorder(
-					BorderFactory.createTitledBorder(new LineBorder(Color.RED, 5), name, TitledBorder.LEFT,
-							TitledBorder.TOP, new Font("Arial", Font.ITALIC, 16)),
-					BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-		}
-		
+			setBorderColour(Color.decode("#415e4a"));
 		else
-			setBorder(BorderFactory.createCompoundBorder(
-					BorderFactory.createTitledBorder(new LineBorder(Color.decode("#415e4a"), 5), name, TitledBorder.LEFT,
-							TitledBorder.TOP, new Font("Arial", Font.ITALIC, 16)),
-					BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+			setBorderColour(Color.decode("#415e4a"));
 		
-		return this;
+		setEnabled(list.isEnabled());
+		setFont(list.getFont());		
+		setOpaque(true);
+		return this;		
 	}
 	
-	public void setPointText(String text)
+	private void setBorderColour(Color colour)
 	{
-		points.setText("Points :" + text);
+		Font titleFont = new Font("Arial", Font.ITALIC, 16);
+		
+		setBorder(
+			BorderFactory.createCompoundBorder(
+				BorderFactory.createEmptyBorder(10, 5, 10, 5), // margin
+				BorderFactory.createCompoundBorder(
+					BorderFactory.createTitledBorder(new LineBorder(colour, 5),
+							name, TitledBorder.LEFT, TitledBorder.TOP, titleFont), // name and border
+					BorderFactory.createEmptyBorder(10, 10, 10, 10) // inner
+				)
+			)
+		);
 	}
 }

@@ -2,18 +2,18 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
 import constants.Events;
-import controller.GameController;
+import controller.PlayerListListener;
+import controller.manager.EventManager;
 import model.SimplePlayer;
 import model.interfaces.Player;
 
@@ -22,98 +22,54 @@ import model.interfaces.Player;
 @SuppressWarnings("serial")
 public class DiceSummaryPanel extends JPanel implements PropertyChangeListener
 {
-	private GameController gameController;
-	private JPanel playerPanels;
+	private JList<Player> list;
+	private DefaultListModel<Player> playerListModel;
 	
-	private Player[] dummyPlayerArray = {new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100),
-			new SimplePlayer("1", "Tomas", 100)};
+	private final int EMPTY_LIST = -1;
 
-	public DiceSummaryPanel(GameController gameController)
+	public DiceSummaryPanel(EventManager gameController)
 	{
-		this.gameController = gameController;
-		
-		gameController.addListener(this);
-
 		setLayout(new BorderLayout());
 		setPreferredSize(new Dimension(300, 0));
 		
-		String[] names = {"Tomas", "Karl", "Ross", "Caspar"};
-		
-		JList<Player> list = new JList<>(dummyPlayerArray);
-		
+		playerListModel = new DefaultListModel<>();
+		list = new JList<>(playerListModel);
 		list.setCellRenderer(new JListPlayerRenderer());
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+//		list.getModel().getElementAt(0).setPoints(30);
 		
-		list.getModel().getElementAt(0).setPoints(20);
+		list.addListSelectionListener(new PlayerListListener(gameController, list));
 		
+		gameController.addListener(this);
+		add(new HouseSummary(), BorderLayout.NORTH);
 		add(new JScrollPane(list), BorderLayout.CENTER);
-
-//		add(createScrollPane(), BorderLayout.CENTER);
-	}
-
-	/*
-	 * Wrapper JPanel is contained in JScrollPane as north-aligned BorderLayout.
-	 * Without the wrapper, any players added to the inner panel will stretch
-	 * vertically to evenly fill height
-	 */
-	
-	private JScrollPane createScrollPane()
-	{
-		JPanel wrapperPanel = new JPanel(new BorderLayout());
-		wrapperPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-		playerPanels = new JPanel(new GridLayout(0, 1, 10, 10));
-		wrapperPanel.add(playerPanels, BorderLayout.NORTH);
-
-		JScrollPane scrollPane = new JScrollPane(wrapperPanel);
-		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-		return scrollPane;
-	}
-
-	private void addScrollPaneItem(JPanel item)
-	{
-		playerPanels.add(item);
-		revalidate();
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt)
 	{
-		if(evt.getPropertyName() == Events.PLAYER_ADDED)
-		{
-			Player newPlayer = (SimplePlayer) evt.getNewValue();
-			String name = newPlayer.getPlayerName();
-			int points = newPlayer.getPoints();
+		String event = evt.getPropertyName();
 
-			addScrollPaneItem(new SinglePlayerSummary(name, points, 300));
+		switch(event)
+		{
+		case Events.PLAYER_ADDED:
+			playerListModel.addElement((SimplePlayer) evt.getNewValue());
+			list.setSelectedValue((SimplePlayer) evt.getNewValue(), true);
+			break;
+		case Events.PLAYER_REMOVED:
+			int selectedIndex = list.getSelectedIndex();
+			if (selectedIndex > 0)
+			{
+				list.setSelectedIndex(selectedIndex - 1);
+			}
+			else if (selectedIndex == 0)
+			{
+				list.setSelectedIndex(selectedIndex + 1);
+			}
+			playerListModel.removeElement((SimplePlayer) evt.getOldValue());
+			revalidate();
+			break;
 		}
 	}
 }
