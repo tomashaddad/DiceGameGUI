@@ -1,4 +1,4 @@
-package view;
+package view.dice;
 
 import java.awt.*;
 import javax.swing.*;
@@ -8,7 +8,8 @@ public class DieGraphic extends JPanel
 {
 	private int value;
 	
-	private final Color CASINO_GREEN = Color.decode("#35654d");
+	public static final Color CASINO_GREEN = Color.decode("#35654d");
+	public static final Color CASINO_RED = Color.decode("#972a27");
 	
 	// these values are arbitrary
 	private final double BORDER_MULTIPLIER = 0.03;
@@ -16,10 +17,10 @@ public class DieGraphic extends JPanel
 	private final double DOT_MULTIPLIER = 0.15;
 	private final double SCALING_MULTIPLIER = 0.9;
 
-	public DieGraphic(int value)
+	public DieGraphic(int value, Color colour)
 	{
 		this.value = value;
-		setBackground(CASINO_GREEN);
+		setBackground(colour);
 	}
 
 	public void paintComponent(Graphics g)

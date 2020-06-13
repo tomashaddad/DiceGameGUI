@@ -1,4 +1,4 @@
-package view;
+package view.toolbar;
 
 import java.awt.Color;
 import java.awt.event.ActionListener;
@@ -15,45 +15,52 @@ import constants.Events;
 import controller.AddPlayerDialogListener;
 import controller.RemovePlayerListener;
 import controller.RollListener;
-import controller.manager.EventManager;
+import controller.game.GameController;
 import model.SimplePlayer;
 import model.interfaces.Player;
 
 @SuppressWarnings("serial")
 public class DiceToolbar extends JToolBar implements PropertyChangeListener
 {
+	private GameController gameController;
+	
+	private AbstractButton addPlayerButton;
 	private AbstractButton removePlayerButton;
-	private EventManager eventManager;
+	private AbstractButton setBetButton;
+	private AbstractButton rollDiceButton;
 	
 	private ActionListener removeListener;
 	private Player selectedPlayer;
 	
-	public DiceToolbar(EventManager eventManager)
+	public DiceToolbar(GameController gameController)
 	{
 		super("Dice Game Toolbar");
 		
-		this.eventManager = eventManager;
+		this.gameController = gameController;
 		
 		setBackground(Color.decode("#B8C4BB"));
 		setFloatable(false);
-		AbstractButton rollDiceButton = new JButton("Roll Dice");
-		AbstractButton setBetButton = new JButton("Set bet");
-		AbstractButton addPlayerButton = new JButton("Add player");
+		
+		addPlayerButton = new JButton("Add player");
 		removePlayerButton = new JButton("Remove player");
+		setBetButton = new JButton("Set bet");
+		rollDiceButton = new JButton("Roll player dice");
 		
-		rollDiceButton.addActionListener(new RollListener(eventManager));
-		addPlayerButton.addActionListener(new AddPlayerDialogListener(eventManager));
-		
-		removeListener = new RemovePlayerListener(eventManager, selectedPlayer);
-		removePlayerButton.addActionListener(removeListener);
+		rollDiceButton.setEnabled(false);
+		setBetButton.setEnabled(false);
 		removePlayerButton.setEnabled(false);
 		
-		eventManager.addListener(this);
+		removeListener = new RemovePlayerListener(gameController, selectedPlayer);
+		removePlayerButton.addActionListener(removeListener);
+		rollDiceButton.addActionListener(new RollListener(gameController));
+		addPlayerButton.addActionListener(new AddPlayerDialogListener(gameController));		
 		
-		add(rollDiceButton);
+		gameController.addListener(this);
+		
 		add(addPlayerButton);
 		add(removePlayerButton);
 		add(setBetButton);
+		add(rollDiceButton);
 	}
 
 	@Override
@@ -63,27 +70,36 @@ public class DiceToolbar extends JToolBar implements PropertyChangeListener
 		
 		switch(event)
 		{
-		
 		case Events.PLAYER_ADDED:
-			removePlayerButton.setEnabled(true);
+			rollDiceButton.setEnabled(true);
 		
 		case Events.PLAYER_SELECTED:
+			removePlayerButton.setEnabled(true);
+			setBetButton.setEnabled(true);
+			rollDiceButton.setEnabled(true);
 			
 			/* If a different player is selected, remove the old actionListener() on the [Remove player]
 			 * button and replace it with an action listener that will remove the now-selected player */
 
+			Player selectedPlayer = gameController.getSelectedPlayer();
 			removePlayerButton.removeActionListener(removeListener);
-			selectedPlayer = (SimplePlayer) evt.getNewValue();
-			removeListener = new RemovePlayerListener(eventManager, selectedPlayer);
+			removeListener = new RemovePlayerListener(gameController, selectedPlayer);
 			removePlayerButton.addActionListener(removeListener);
 			break;
 			
 		case Events.PLAYER_REMOVED:
-			if (eventManager.getGameEngine().getAllPlayers().isEmpty())
+			if (gameController.getGameEngine().getAllPlayers().isEmpty())
 			{
 				removePlayerButton.setEnabled(false);
+				rollDiceButton.setEnabled(false);
+				setBetButton.setEnabled(false);
 			}
 			break;
+			
+		case Events.HOUSE_SELECTED:
+			removePlayerButton.setEnabled(false);
+			setBetButton.setEnabled(false);
+			rollDiceButton.setEnabled(false);
 		}
 	}
 }

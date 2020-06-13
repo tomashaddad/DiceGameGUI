@@ -7,14 +7,14 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import controller.manager.EventManager;
-import view.AddPlayerDialog;
+import controller.game.GameController;
+import view.toolbar.AddPlayerDialog;
 
 public class AddPlayerDialogListener implements ActionListener
 {
-	EventManager eventManager;
+	GameController eventManager;
 
-	public AddPlayerDialogListener(EventManager eventManager)
+	public AddPlayerDialogListener(GameController eventManager)
 	{
 		this.eventManager = eventManager;
 	}

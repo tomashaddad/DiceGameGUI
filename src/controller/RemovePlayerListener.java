@@ -4,15 +4,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import constants.Events;
-import controller.manager.EventManager;
+import controller.game.GameController;
 import model.interfaces.Player;
 
 public class RemovePlayerListener implements ActionListener
 {
-	private EventManager eventManager;
+	private GameController eventManager;
 	private Player player;
 	
-	public RemovePlayerListener(EventManager eventManager, Player player)
+	public RemovePlayerListener(GameController eventManager, Player player)
 	{
 		this.eventManager = eventManager;
 		this.player = player;
@@ -22,6 +22,6 @@ public class RemovePlayerListener implements ActionListener
 	public void actionPerformed(ActionEvent e)
 	{
 		eventManager.getGameEngine().removePlayer(player);
-		eventManager.getListeners().firePropertyChange(Events.PLAYER_REMOVED, player, null);
+		eventManager.firePropertyChange(Events.PLAYER_REMOVED, player, null);
 	}
 }

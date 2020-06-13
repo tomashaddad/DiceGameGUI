@@ -10,13 +10,18 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 
-import controller.manager.EventManager;
+import controller.game.GameController;
 import model.GameEngineImpl;
+import view.dice.GamePanel;
+import view.menu.GameMenu;
+import view.statusbar.DiceStatusBar;
+import view.summaries.DiceSummaryPanel;
+import view.toolbar.DiceToolbar;
 
 @SuppressWarnings("serial")
 public class DiceFrame extends JFrame
 {
-	private EventManager eventManager;
+	private GameController gameController;
 	private GamePanel gamePanel;
 	private DiceToolbar diceToolbar;
 	private DiceSummaryPanel diceSummaryPanel;
@@ -26,20 +31,21 @@ public class DiceFrame extends JFrame
 	{
 		super("Knockoff Dice Game");
 		
-		// enable or disable GUI logging for debugging
+		// enable or disable GUI logging
 		disableGUILogger(true);
+
+		setLayout(new BorderLayout());
 		
-		eventManager = new EventManager(new GameEngineImpl());				
-		eventManager.getGameEngine().addGameEngineCallback(new GameEngineCallbackImpl());
-		eventManager.getGameEngine().addGameEngineCallback(new GameEngineCallbackGUI(eventManager));
+		gameController = new GameController(new GameEngineImpl());				
+		gameController.getGameEngine().addGameEngineCallback(new GameEngineCallbackImpl());
+		gameController.getGameEngine().addGameEngineCallback(new GameEngineCallbackGUI(gameController));
 		
-		gamePanel = new GamePanel(eventManager);
-		diceToolbar = new DiceToolbar(eventManager);
-		diceSummaryPanel = new DiceSummaryPanel(eventManager);
-		diceStatus = new DiceStatusBar(eventManager);
+		gamePanel = new GamePanel(gameController);
+		diceToolbar = new DiceToolbar(gameController);
+		diceSummaryPanel = new DiceSummaryPanel(gameController);
+		diceStatus = new DiceStatusBar(gameController);
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setLayout(new BorderLayout());
 
 		getRootPane().setBorder(BorderFactory.createLineBorder(Color.WHITE, 5));
 
@@ -57,21 +63,6 @@ public class DiceFrame extends JFrame
 		pack();
 		setLocationRelativeTo(null);
 		setVisible(true);
-	}
-
-	public DicePanel getGamePanel()
-	{
-		return gamePanel.getDicePanel();
-	}
-
-	public DiceToolbar getDiceToolbar()
-	{
-		return diceToolbar;
-	}
-
-	public DiceSummaryPanel getDiceSummaryPanel()
-	{
-		return diceSummaryPanel;
 	}
 
 	public void disableGUILogger(boolean disable)

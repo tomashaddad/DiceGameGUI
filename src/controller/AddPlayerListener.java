@@ -4,20 +4,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import constants.Events;
-import controller.manager.EventManager;
+import controller.game.GameController;
 import model.SimplePlayer;
 import model.interfaces.Player;
 import util.Rand;
-import view.AddPlayerDialog;
+import view.toolbar.AddPlayerDialog;
 
 public class AddPlayerListener implements ActionListener
 {
 	private AddPlayerDialog dialog;
-	private EventManager eventManager;
+	private GameController gameController;
 
-	public AddPlayerListener(AddPlayerDialog dialog, EventManager eventManager)
+	public AddPlayerListener(AddPlayerDialog dialog, GameController gameController)
 	{
-		this.eventManager = eventManager;
+		this.gameController = gameController;
 		this.dialog = dialog;
 	}
 
@@ -32,9 +32,13 @@ public class AddPlayerListener implements ActionListener
 		Player newPlayer = new SimplePlayer(ID, playerName, points);
 		newPlayer.setBet(bet);
 		
-		eventManager.getGameEngine().addPlayer(newPlayer);
-		eventManager.getListeners().firePropertyChange(Events.PLAYER_ADDED, null, newPlayer);
-
+		gameController.addNewPlayer(newPlayer);
+		
+//		gameController.getGameEngine().addPlayer(newPlayer);
+//		gameController.setSelectedPlayer(newPlayer);
+//		
+//		gameController.firePropertyChange(Events.PLAYER_ADDED, null, newPlayer);
+		
 		dialog.setVisible(false);
 	}
 }

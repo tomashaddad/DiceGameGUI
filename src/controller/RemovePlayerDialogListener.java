@@ -7,15 +7,15 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import controller.manager.EventManager;
+import controller.game.GameController;
 import model.interfaces.Player;
 
 public class RemovePlayerDialogListener implements ActionListener
 {
-	EventManager eventManager;
+	GameController eventManager;
 	Player player;
 	
-	public RemovePlayerDialogListener(EventManager eventManager, Player player)
+	public RemovePlayerDialogListener(GameController eventManager, Player player)
 	{
 		this.eventManager = eventManager;
 		this.player = player;

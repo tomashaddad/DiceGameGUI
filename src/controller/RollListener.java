@@ -3,17 +3,17 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import controller.manager.EventManager;
+import controller.game.GameController;
 import model.SimplePlayer;
 import model.interfaces.GameEngine;
 
 public class RollListener implements ActionListener
 {
-	private EventManager gameController;
+	private GameController eventManager;
 	
-	public RollListener(EventManager eventManager)
+	public RollListener(GameController eventManager)
 	{
-		this.gameController = eventManager;
+		this.eventManager = eventManager;
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class RollListener implements ActionListener
 			@Override
 			public void run()
 			{
-				gameController.rollPlayer(new SimplePlayer("1", "The Roller", 5000));
+				eventManager.rollPlayer(eventManager.getSelectedPlayer());
 			}
 		}.start();
 	}

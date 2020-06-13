@@ -1,4 +1,4 @@
-package view;
+package view.statusbar;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -10,38 +10,43 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import constants.Events;
-import controller.manager.EventManager;
+import controller.game.GameController;
 import model.interfaces.Player;
 
 @SuppressWarnings("serial")
 public class DiceStatusBar extends JPanel implements PropertyChangeListener
 {
 	JLabel label;
+	GameController gameController;
 	
-	public DiceStatusBar(EventManager eventManager)
+	public DiceStatusBar(GameController gameController)
 	{
+		this.gameController = gameController;
+		
 		setBackground(Color.decode("#B8C4BB"));
 		setBorder(BorderFactory.createLineBorder(Color.WHITE, 5));
 		setLayout(new BorderLayout());
 		
-		label = new JLabel("Placeholder");
+		label = new JLabel("House MD");
 		
 		add(label, BorderLayout.CENTER);
 		
-		eventManager.addListener(this);
+		gameController.addListener(this);
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt)
 	{
-		Player player = (Player) evt.getNewValue();
-		
 		String event = evt.getPropertyName();
 		
 		switch(event)
 		{
 		case Events.PLAYER_SELECTED:
-			label.setText(player.getPlayerName());
+			label.setText(gameController.getSelectedPlayer().getPlayerName());
+			break;
+			
+		case Events.HOUSE_SELECTED:
+			label.setText("House MD");
 			break;
 		}
 	}

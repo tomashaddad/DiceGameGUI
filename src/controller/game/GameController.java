@@ -1,4 +1,4 @@
-package controller.manager;
+package controller.game;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -18,13 +18,14 @@ import view.model.ViewModel;
  * 
  * */
 
-public class EventManager
+public class GameController
 {
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private GameEngine engine;
-	private ViewModel viewModel;
+	private ViewModel viewModel = new ViewModel();
+	private Player selectedPlayer; // TODO: Move to view model
 	
-	public EventManager(GameEngine engine)
+	public GameController(GameEngine engine)
 	{
 		this.engine = engine;
 	}
@@ -37,7 +38,7 @@ public class EventManager
 	public void updatePlayerDie(Player player, Die die)
 	{
 		viewModel.updatePlayerDie(player, die);
-		pcs.firePropertyChange(Events.DIE_UPDATED, null, player);
+		pcs.firePropertyChange(Events.PLAYER_DIE_UPDATED, null, player);
 	}
 	
 	public void addListener(PropertyChangeListener listener)
@@ -48,6 +49,23 @@ public class EventManager
 	public void removeListener(PropertyChangeListener listener)
 	{
 		pcs.removePropertyChangeListener(listener);
+	}
+	
+	public void setSelectedPlayer(Player player)
+	{
+		selectedPlayer = player;
+	}
+	
+	public void addNewPlayer(Player player)
+	{
+		engine.addPlayer(player);
+		setSelectedPlayer(player);
+		firePropertyChange(Events.PLAYER_ADDED, null, player);
+	}
+	
+	public Player getSelectedPlayer()
+	{
+		return selectedPlayer;
 	}
 
 	public GameEngine getGameEngine()
@@ -60,8 +78,8 @@ public class EventManager
 		return viewModel;
 	}
 	
-	public PropertyChangeSupport getListeners()
+	public void firePropertyChange(String propertyName, Object oldValue, Object newValue)
 	{
-		return pcs;
+		pcs.firePropertyChange(propertyName, oldValue, newValue);
 	}
 }

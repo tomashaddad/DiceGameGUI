@@ -1,8 +1,6 @@
 package view;
 
-import javax.swing.SwingUtilities;
-
-import controller.manager.EventManager;
+import controller.game.GameController;
 import model.interfaces.DicePair;
 import model.interfaces.Die;
 import model.interfaces.GameEngine;
@@ -11,24 +9,17 @@ import view.interfaces.GameEngineCallback;
 
 public class GameEngineCallbackGUI implements GameEngineCallback
 {
-	private EventManager eventManager;
+	private GameController gameController;
 	
-	public GameEngineCallbackGUI(EventManager eventManager)
+	public GameEngineCallbackGUI(GameController gameController)
 	{
-		this.eventManager = eventManager;
+		this.gameController = gameController;
 	}
 	
 	@Override
 	public void playerDieUpdate(Player player, Die die, GameEngine gameEngine)
 	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				eventManager.updatePlayerDie(player, die);
-			}
-		});
+		gameController.updatePlayerDie(player, die);
 	}
 
 	@Override

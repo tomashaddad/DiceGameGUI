@@ -1,4 +1,4 @@
-package view;
+package view.toolbar;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,10 +13,11 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import controller.AddPlayerListener;
 import controller.CancelDialogListener;
-import controller.manager.EventManager;
+import controller.game.GameController;
 
 @SuppressWarnings("serial")
 public class AddPlayerDialog extends JDialog
@@ -25,7 +26,7 @@ public class AddPlayerDialog extends JDialog
 	private JSpinner pointsInput;
 	private JSpinner betInput;
 
-	public AddPlayerDialog(JFrame frame, EventManager eventManager)
+	public AddPlayerDialog(JFrame frame, GameController gameController)
 	{
 		super(frame, "Add new player", false);
 		
@@ -39,10 +40,9 @@ public class AddPlayerDialog extends JDialog
 		pointsInput = new JSpinner(pointModel);
 		betInput = new JSpinner(betModel);
 		JButton okButton = new JButton("OK");
-		JButton cancelButton = new JButton("Cancel");
+		JButton cancelButton = new JButton("Cancel");		
 		
-		
-		okButton.addActionListener(new AddPlayerListener(this, eventManager));
+		okButton.addActionListener(new AddPlayerListener(this, gameController));
 		cancelButton.addActionListener(new CancelDialogListener(this));
 		
 		// 3 row, 4 column grid
