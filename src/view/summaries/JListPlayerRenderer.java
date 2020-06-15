@@ -13,15 +13,16 @@ import javax.swing.ListCellRenderer;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import model.PlayerListItem;
 import model.interfaces.Player;
 
 @SuppressWarnings("serial")
-public class JListPlayerRenderer extends JPanel implements ListCellRenderer<Player>
+public class JListPlayerRenderer extends JPanel implements ListCellRenderer<PlayerListItem>
 {
-	private String name = "Placeholder";
-	
-	private JLabel points = new JLabel("");
-	private JLabel bet = new JLabel("");
+	private String name;
+	private JLabel pointsLabel = new JLabel("");
+	private JLabel betLabel = new JLabel("");
+	private JLabel winningsLabel = new JLabel("");
 	
 	public JListPlayerRenderer()
 	{
@@ -30,36 +31,38 @@ public class JListPlayerRenderer extends JPanel implements ListCellRenderer<Play
 		setBackground(Color.WHITE);
 		setFocusable(true);
 
-		add(points);
-		add(bet);
+		add(pointsLabel);
+		add(betLabel);
+		add(winningsLabel);
 	}
 	
 	@Override
-	public Component getListCellRendererComponent(JList<? extends Player> list, Player player, int index,
+	public Component getListCellRendererComponent(JList<? extends PlayerListItem> list, PlayerListItem item, int index,
 			boolean isSelected, boolean cellHasFocus)
 	{
-		name = player.getPlayerName();
-		points.setText("Points: " + Integer.toString(player.getPoints()));
-		bet.setText("Bet: " + Integer.toString(player.getBet()));
+		name = item.getPlayer().getPlayerName();
+		int points = item.getPlayer().getPoints();
+		int bet = item.getPlayer().getBet();
+		int winnings = item.getWinnings();
+		
+		pointsLabel.setText("Points: " + points);
+		betLabel.setText("Bet: " + bet);
+		winningsLabel.setText("Win/loss last round: " + winnings);
 		
 		if (isSelected)
 			setBackground(Color.decode("#e6ebe6"));
 		else
 			setBackground(Color.WHITE);
 		
-		
-		if (isSelected && cellHasFocus)
-			setBorderColour(Color.decode("#415e4a"));
-		else
-			setBorderColour(Color.decode("#415e4a"));
-		
+		setBorderColour(Color.decode("#415e4a"));
+
 		setEnabled(list.isEnabled());
 		setFont(list.getFont());		
 		setOpaque(true);
 		return this;		
 	}
 	
-	private void setBorderColour(Color colour)
+	public void setBorderColour(Color colour)
 	{
 		Font titleFont = new Font("Arial", Font.ITALIC, 16);
 		

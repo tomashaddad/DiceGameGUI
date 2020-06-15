@@ -9,7 +9,7 @@ import view.toolbar.DiceToolbar;
 
 /* 
  * GamePanel acts as a container for the different regions of the main game area
- * to the right of the player summary panel. *
+ * to the right of the player summary panel.
  * 
  */
 

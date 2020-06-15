@@ -1,7 +1,6 @@
 package view.dice;
 
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
@@ -50,7 +49,7 @@ public class DicePanel extends JPanel implements PropertyChangeListener
 	@Override
 	public void propertyChange(PropertyChangeEvent evt)
 	{
-		String event = (String) evt.getPropertyName();
+		String event = evt.getPropertyName();
 
 		switch(event)
 		{
@@ -90,22 +89,34 @@ public class DicePanel extends JPanel implements PropertyChangeListener
 			
 		case Events.PLAYER_DIE_UPDATED:
 			Player updatedPlayer = (SimplePlayer) evt.getNewValue();
-			Die newDie = gameController.getViewModel().getPlayerDies().get(updatedPlayer);
+			Die newPlayerDie = gameController.getPlayerDie(updatedPlayer);
 			DicePairCard playerPanel = playerDicePanels.get(updatedPlayer);
-			int dieValue = newDie.getValue();
+			int playerDieValue = newPlayerDie.getValue();
 
-			if (newDie.getNumber() == 1)
-			{
-				playerPanel.getDie1().setValue(dieValue);
-			}
-			
-			if (newDie.getNumber() == 2)
-			{
-				playerPanel.getDie2().setValue(dieValue);
-			}
+			if (newPlayerDie.getNumber() == 1)
+				playerPanel.getDie1().setValue(playerDieValue);
+			if (newPlayerDie.getNumber() == 2)
+				playerPanel.getDie2().setValue(playerDieValue);
 			
 			playerPanel.revalidate();
 			playerPanel.repaint();
+			break;
+		
+		case Events.HOUSE_DIE_UPDATED:
+			Die newHouseDie = (Die) evt.getNewValue();
+			int houseDieValue = newHouseDie.getValue();
+			
+			if (newHouseDie.getNumber() == 1)
+				houseCard.getDie1().setValue(houseDieValue);
+			if (newHouseDie.getNumber() == 2)
+				houseCard.getDie2().setValue(houseDieValue);
+			
+			houseCard.revalidate();
+			houseCard.repaint();
+			break;
+			
+		default:
+			// do nothing
 			break;
 		}
 	}

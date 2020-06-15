@@ -4,82 +4,143 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import constants.Events;
+import constants.Status;
+import model.interfaces.DicePair;
 import model.interfaces.Die;
 import model.interfaces.GameEngine;
 import model.interfaces.Player;
+import view.interfaces.GameEngineCallback;
 import view.model.ViewModel;
 
-/* The sole purpose of this class is to hold the listeners for event firing, and to hold 
- * references of the GameEngine and ViewModel.
- * 
- * i.e. this is equivalent to passing the frame everywhere and calling view getters (and GameEngine/ViewModel
- * getters on the frame) that eventually change the view and update the model accordingly,
- * but this way I get to use property change listeners :)
- * 
- * */
+/* The purpose of this class is to centralise game and event management.
+ * 	e.g. If there were multiple ways to add players, each listener does not need to repeat the
+ * 	code contained within the methods of this class each time.
+ */
 
 public class GameController
 {
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private GameEngine engine;
 	private ViewModel viewModel = new ViewModel();
-	private Player selectedPlayer; // TODO: Move to view model
 	
 	public GameController(GameEngine engine)
 	{
 		this.engine = engine;
 	}
 
+	public void addNewPlayer(Player player, int bet)
+	{
+		engine.addPlayer(player);
+		viewModel.addPlayer(player);
+		selectPlayer(player);
+		pcs.firePropertyChange(Events.PLAYER_ADDED, null, player);			
+	}
+
 	public void rollPlayer(Player player)
 	{
-		engine.rollPlayer(player, 100, 1000, 100, 50, 500, 50);
+		new Thread()
+		{
+			@Override
+			public void run()
+			{
+				engine.rollPlayer(player, 100, 1000, 100, 50, 500, 50);
+			}
+		}.start();
+		
+		viewModel.setPlayerStatus(player, Status.ROLLING);
+		pcs.firePropertyChange(Events.PLAYER_ROLLING, null, player);
 	}
 	
+	public void rollHouse()
+	{
+		new Thread()
+		{
+			@Override
+			public void run()
+			{
+				engine.rollHouse(100, 1000, 100, 50, 500, 50);
+			}
+		}.start();
+		
+		pcs.firePropertyChange(Events.HOUSE_ROLLING, null, null);
+	}
+
 	public void updatePlayerDie(Player player, Die die)
 	{
 		viewModel.updatePlayerDie(player, die);
 		pcs.firePropertyChange(Events.PLAYER_DIE_UPDATED, null, player);
 	}
-	
-	public void addListener(PropertyChangeListener listener)
+
+	public void updateHouseDie(Die die)
 	{
-		pcs.addPropertyChangeListener(listener);
+		pcs.firePropertyChange(Events.HOUSE_DIE_UPDATED, null, die);
+	}
+	
+	public void announcePlayerResult(Player player)
+	{
+		viewModel.setPlayerStatus(player, Status.ROLLED);
+		pcs.firePropertyChange(Events.PLAYER_ROLLED, null, player);
+		
+		if (viewModel.haveAllPlayersRolled())
+		{
+			rollHouse();
+		}
 	}
 
-	public void removeListener(PropertyChangeListener listener)
+	public void selectPlayer(Player player)
 	{
-		pcs.removePropertyChangeListener(listener);
-	}
-	
-	public void setSelectedPlayer(Player player)
-	{
-		selectedPlayer = player;
-	}
-	
-	public void addNewPlayer(Player player)
-	{
-		engine.addPlayer(player);
-		setSelectedPlayer(player);
-		firePropertyChange(Events.PLAYER_ADDED, null, player);
+		viewModel.setSelectedPlayer(player);
+		pcs.firePropertyChange(Events.PLAYER_SELECTED, null, null);
 	}
 	
 	public Player getSelectedPlayer()
 	{
-		return selectedPlayer;
+		return viewModel.getSelectedPlayer();
 	}
 
-	public GameEngine getGameEngine()
+	public void removePlayer(Player player)
 	{
-		return engine;
+		engine.removePlayer(player);
+		pcs.firePropertyChange(Events.PLAYER_REMOVED, player, null);
 	}
 	
-	public ViewModel getViewModel()
+	public void selectHouse()
 	{
-		return viewModel;
+		pcs.firePropertyChange(Events.HOUSE_SELECTED, null, null);
 	}
 	
-	public void firePropertyChange(String propertyName, Object oldValue, Object newValue)
+	public Die getPlayerDie(Player player)
 	{
-		pcs.firePropertyChange(propertyName, oldValue, newValue);
+		return viewModel.getPlayerDie(player);
+	}
+	
+	public boolean isPlayerListEmpty()
+	{
+		return engine.getAllPlayers().isEmpty();
+	}
+	
+	public void addGameEngineCallback(GameEngineCallback callback)
+	{
+		engine.addGameEngineCallback(callback);
+	}
+
+	public void addListener(PropertyChangeListener listener)
+	{
+		pcs.addPropertyChangeListener(listener);
+	}
+	
+	public void removeListener(PropertyChangeListener listener)
+	{
+		pcs.removePropertyChangeListener(listener);
+	}
+
+	public String getPlayerStatus(Player player)
+	{
+		return viewModel.getPlayerStatus(player);
+	}
+
+	public void announceHouseResult(DicePair result)
+	{
+		pcs.firePropertyChange(Events.HOUSE_ROLLED, null, result);		
 	}
 }

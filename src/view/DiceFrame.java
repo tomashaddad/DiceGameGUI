@@ -16,14 +16,12 @@ import view.dice.GamePanel;
 import view.menu.GameMenu;
 import view.statusbar.DiceStatusBar;
 import view.summaries.DiceSummaryPanel;
-import view.toolbar.DiceToolbar;
 
 @SuppressWarnings("serial")
 public class DiceFrame extends JFrame
 {
 	private GameController gameController;
 	private GamePanel gamePanel;
-	private DiceToolbar diceToolbar;
 	private DiceSummaryPanel diceSummaryPanel;
 	private DiceStatusBar diceStatus;
 
@@ -37,11 +35,10 @@ public class DiceFrame extends JFrame
 		setLayout(new BorderLayout());
 		
 		gameController = new GameController(new GameEngineImpl());				
-		gameController.getGameEngine().addGameEngineCallback(new GameEngineCallbackImpl());
-		gameController.getGameEngine().addGameEngineCallback(new GameEngineCallbackGUI(gameController));
+		gameController.addGameEngineCallback(new GameEngineCallbackImpl());
+		gameController.addGameEngineCallback(new GameEngineCallbackGUI(gameController));
 		
 		gamePanel = new GamePanel(gameController);
-		diceToolbar = new DiceToolbar(gameController);
 		diceSummaryPanel = new DiceSummaryPanel(gameController);
 		diceStatus = new DiceStatusBar(gameController);
 

@@ -13,7 +13,8 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import controller.AddPlayerListener;
 import controller.CancelDialogListener;
@@ -28,24 +29,22 @@ public class AddPlayerDialog extends JDialog
 
 	public AddPlayerDialog(JFrame frame, GameController gameController)
 	{
-		super(frame, "Add new player", false);
-		
+		super(frame, "Add new player", true);
+
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		
-		SpinnerModel pointModel = new SpinnerNumberModel(0, 0, null, 1);
-		SpinnerModel betModel = new SpinnerNumberModel(0, 0, null, 1);
-
+		SpinnerNumberModel pointModel = new SpinnerNumberModel(0, 0, null, 1);
+		SpinnerNumberModel betModel = new SpinnerNumberModel(0, 0, null, 1);
+		
 		usernameInput = new JTextField("Ross Nye");
 		pointsInput = new JSpinner(pointModel);
 		betInput = new JSpinner(betModel);
 		JButton okButton = new JButton("OK");
 		JButton cancelButton = new JButton("Cancel");		
-		
+
 		okButton.addActionListener(new AddPlayerListener(this, gameController));
 		cancelButton.addActionListener(new CancelDialogListener(this));
-		
-		// 3 row, 4 column grid
 
 		gbc.weightx = 0.5;
 		gbc.weighty = 0.5;
@@ -53,6 +52,8 @@ public class AddPlayerDialog extends JDialog
 		gbc.anchor = GridBagConstraints.LINE_END;
 		
 		gbc.insets = new Insets(10, 10, 10, 10);
+		
+		// First three rows, left side: 1-column wide input labels
 		
 		gbc.gridx = 0;
 		gbc.gridy = 0;
@@ -65,6 +66,8 @@ public class AddPlayerDialog extends JDialog
 		gbc.gridx = 0;
 		gbc.gridy = 2;
 		add(new JLabel("Bet: ", SwingConstants.RIGHT), gbc);
+		
+		// First three rows, right side: 3-column wide input fields
 
 		gbc.anchor = GridBagConstraints.LINE_START;
 		gbc.gridwidth = 3;
@@ -80,6 +83,8 @@ public class AddPlayerDialog extends JDialog
 		gbc.gridx = 1;
 		gbc.gridy = 2;
 		add(betInput, gbc);
+		
+		// Last row: 1 column wide OK and CANCEL, in third and fourth cells
 
 		gbc.gridwidth = 1;
 		

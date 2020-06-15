@@ -25,21 +25,18 @@ public class GameEngineCallbackGUI implements GameEngineCallback
 	@Override
 	public void houseDieUpdate(Die die, GameEngine gameEngine)
 	{
-		// TODO Auto-generated method stub
-		
+		gameController.updateHouseDie(die);
 	}
 
 	@Override
 	public void playerResult(Player player, DicePair result, GameEngine gameEngine)
 	{
-		// TODO Auto-generated method stub
-		
+		gameController.announcePlayerResult(player);
 	}
 
 	@Override
 	public void houseResult(DicePair result, GameEngine gameEngine)
 	{
-		// TODO Auto-generated method stub
-		
+		gameController.announceHouseResult(result);
 	}
 }

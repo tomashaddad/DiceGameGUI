@@ -3,8 +3,8 @@ package controller;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import constants.Events;
 import controller.game.GameController;
+import model.PlayerListItem;
 import model.interfaces.Player;
 import view.summaries.DiceSummaryPanel;
 
@@ -21,13 +21,15 @@ public class PlayerListListener implements ListSelectionListener
 	
 	@Override
 	public void valueChanged(ListSelectionEvent e)
-	{		
-		Player player = dsp.getList().getSelectedValue();
-		
-		if(!e.getValueIsAdjusting() && player != null)
+	{
+		/* Can't cast e.getSource() to JList<Player> due to Java type erasure
+		 * so must pass the list as shown ... */
+		PlayerListItem listItem = dsp.getList().getSelectedValue();
+
+		if(!e.getValueIsAdjusting() && listItem != null)
 		{
-			eventManager.setSelectedPlayer(player);
-			eventManager.firePropertyChange(Events.PLAYER_SELECTED, null, null);
+			Player player = listItem.getPlayer();
+			eventManager.selectPlayer(player);
 		}
 	}
 }

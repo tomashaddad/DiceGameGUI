@@ -1,14 +1,11 @@
 package view.toolbar;
 
 import java.awt.Color;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JToolBar;
 
 import constants.Events;
@@ -16,8 +13,6 @@ import controller.AddPlayerDialogListener;
 import controller.RemovePlayerListener;
 import controller.RollListener;
 import controller.game.GameController;
-import model.SimplePlayer;
-import model.interfaces.Player;
 
 @SuppressWarnings("serial")
 public class DiceToolbar extends JToolBar implements PropertyChangeListener
@@ -28,9 +23,6 @@ public class DiceToolbar extends JToolBar implements PropertyChangeListener
 	private AbstractButton removePlayerButton;
 	private AbstractButton setBetButton;
 	private AbstractButton rollDiceButton;
-	
-	private ActionListener removeListener;
-	private Player selectedPlayer;
 	
 	public DiceToolbar(GameController gameController)
 	{
@@ -49,9 +41,8 @@ public class DiceToolbar extends JToolBar implements PropertyChangeListener
 		rollDiceButton.setEnabled(false);
 		setBetButton.setEnabled(false);
 		removePlayerButton.setEnabled(false);
-		
-		removeListener = new RemovePlayerListener(gameController, selectedPlayer);
-		removePlayerButton.addActionListener(removeListener);
+
+		removePlayerButton.addActionListener(new RemovePlayerListener(gameController));
 		rollDiceButton.addActionListener(new RollListener(gameController));
 		addPlayerButton.addActionListener(new AddPlayerDialogListener(gameController));		
 		
@@ -70,36 +61,28 @@ public class DiceToolbar extends JToolBar implements PropertyChangeListener
 		
 		switch(event)
 		{
-		case Events.PLAYER_ADDED:
-			rollDiceButton.setEnabled(true);
-		
 		case Events.PLAYER_SELECTED:
-			removePlayerButton.setEnabled(true);
-			setBetButton.setEnabled(true);
-			rollDiceButton.setEnabled(true);
-			
-			/* If a different player is selected, remove the old actionListener() on the [Remove player]
-			 * button and replace it with an action listener that will remove the now-selected player */
-
-			Player selectedPlayer = gameController.getSelectedPlayer();
-			removePlayerButton.removeActionListener(removeListener);
-			removeListener = new RemovePlayerListener(gameController, selectedPlayer);
-			removePlayerButton.addActionListener(removeListener);
+			togglePlayerButtons(true);
 			break;
 			
 		case Events.PLAYER_REMOVED:
-			if (gameController.getGameEngine().getAllPlayers().isEmpty())
-			{
-				removePlayerButton.setEnabled(false);
-				rollDiceButton.setEnabled(false);
-				setBetButton.setEnabled(false);
-			}
+			if (gameController.isPlayerListEmpty())
+				togglePlayerButtons(false);
 			break;
 			
 		case Events.HOUSE_SELECTED:
-			removePlayerButton.setEnabled(false);
-			setBetButton.setEnabled(false);
-			rollDiceButton.setEnabled(false);
+			togglePlayerButtons(false);
+			
+		default:
+			// do nothing
+			break;
 		}
+	}
+	
+	public void togglePlayerButtons(boolean toggle)
+	{
+		removePlayerButton.setEnabled(toggle);
+		setBetButton.setEnabled(toggle);
+		rollDiceButton.setEnabled(toggle);
 	}
 }

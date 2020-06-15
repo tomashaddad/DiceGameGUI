@@ -4,6 +4,11 @@ import java.awt.Point;
 
 public class DotPositions
 {
+	private DotPositions()
+	{
+		throw new IllegalStateException("Utility class");
+	}
+	
 	/*
 	 * (-1, 1)   (0,-1)   (1,-1)
 	 * 

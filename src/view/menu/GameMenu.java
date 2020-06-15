@@ -15,7 +15,7 @@ public class GameMenu extends JMenuBar
 		file.setMnemonic(KeyEvent.VK_F); // if you hold ALT+F it opens the FILE menu
 		JMenuItem exit = new JMenuItem("Exit");
 		exit.setMnemonic(KeyEvent.VK_E); // after opening file menu, ALT+E closes window
-		exit.addActionListener(e -> {System.exit(0);}); // TODO: LAMBDA!?!?!?
+		exit.addActionListener(e -> System.exit(0)); // TODO: LAMBDA!?!?!?
 		file.add(exit);
 		add(file);
 	}

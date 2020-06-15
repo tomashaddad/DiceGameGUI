@@ -12,10 +12,10 @@ public class DieGraphic extends JPanel
 	public static final Color CASINO_RED = Color.decode("#972a27");
 	
 	// these values are arbitrary
-	private final double BORDER_MULTIPLIER = 0.03;
-	private final double ARC_MULTIPLIER = 0.3;
-	private final double DOT_MULTIPLIER = 0.15;
-	private final double SCALING_MULTIPLIER = 0.9;
+	private static final double BORDER_MULTIPLIER = 0.03;
+	private static final double ARC_MULTIPLIER = 0.3;
+	private static final double DOT_MULTIPLIER = 0.15;
+	private static final double SCALING_MULTIPLIER = 0.9;
 
 	public DieGraphic(int value, Color colour)
 	{
@@ -23,6 +23,7 @@ public class DieGraphic extends JPanel
 		setBackground(colour);
 	}
 
+	@Override
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);

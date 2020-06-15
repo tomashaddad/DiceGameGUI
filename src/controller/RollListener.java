@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import controller.game.GameController;
-import model.SimplePlayer;
-import model.interfaces.GameEngine;
 
 public class RollListener implements ActionListener
 {
@@ -19,13 +17,6 @@ public class RollListener implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		new Thread()
-		{
-			@Override
-			public void run()
-			{
-				eventManager.rollPlayer(eventManager.getSelectedPlayer());
-			}
-		}.start();
+		eventManager.rollPlayer(eventManager.getSelectedPlayer());
 	}
 }

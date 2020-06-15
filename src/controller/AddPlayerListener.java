@@ -3,11 +3,14 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import constants.Events;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 import controller.game.GameController;
 import model.SimplePlayer;
 import model.interfaces.Player;
-import util.Rand;
 import view.toolbar.AddPlayerDialog;
 
 public class AddPlayerListener implements ActionListener
@@ -24,21 +27,30 @@ public class AddPlayerListener implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
+		JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(dialog);
+
+		String id = String.valueOf(SimplePlayer.playerIDCounter++);
 		String playerName = dialog.getUsername();
-		String ID = String.valueOf(SimplePlayer.playerIDCounter++);
 		int points = dialog.getPoints();
 		int bet = dialog.getBet();
+
+		Player newPlayer = new SimplePlayer(id, playerName, points);
 		
-		Player newPlayer = new SimplePlayer(ID, playerName, points);
-		newPlayer.setBet(bet);
+		if (newPlayer.setBet(bet))
+		{
+			gameController.addNewPlayer(newPlayer, bet);
+			dialog.setVisible(false);
+		}
 		
-		gameController.addNewPlayer(newPlayer);
+		else if (bet > points)
+		{
+			JOptionPane.showMessageDialog(frame, "You cannot set a bet higher than your points!");
+		}
 		
-//		gameController.getGameEngine().addPlayer(newPlayer);
-//		gameController.setSelectedPlayer(newPlayer);
-//		
-//		gameController.firePropertyChange(Events.PLAYER_ADDED, null, newPlayer);
-		
-		dialog.setVisible(false);
+		else
+		{
+			JOptionPane.showMessageDialog(frame, "You cannot set a bet of 0!");
+		}
+	
 	}
 }

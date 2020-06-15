@@ -3,26 +3,22 @@ package view.summaries;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
 import constants.Events;
+import controller.HouseSummaryListener;
 import controller.PlayerListListener;
 import controller.game.GameController;
+import model.PlayerListItem;
 import model.SimplePlayer;
+import model.interfaces.DicePair;
 import model.interfaces.Player;
 
 // reference: https://stackoverflow.com/questions/38021262/how-to-dynamically-add-elements-to-a-jscrollpanel
@@ -30,17 +26,12 @@ import model.interfaces.Player;
 @SuppressWarnings("serial")
 public class DiceSummaryPanel extends JPanel implements PropertyChangeListener
 {
-	private JList<Player> list;
-	private DefaultListModel<Player> playerListModel;
+	private JList<PlayerListItem> list;
+	private DefaultListModel<PlayerListItem> playerListModel;
+	
+	private final Color houseBackgroundColour = Color.decode("#e8dcdc");
 	
 	HouseSummary houseSummary;
-	
-	String instructionBody = "Instructions: <br>"
-			+ "Add a new player by selecting the button above the dice pair panel"
-			+ "to the right. You can navigate through the house's or each player's"
-			+ "dice pairs by clicking their entries above.<br>"
-			+ "Good luck!<br>"
-			+ "(Gambler's Help: 1800 858 858)";
 	
 	public DiceSummaryPanel(GameController gameController)
 	{
@@ -54,16 +45,9 @@ public class DiceSummaryPanel extends JPanel implements PropertyChangeListener
 		list.addListSelectionListener(new PlayerListListener(gameController, this));
 		
 		houseSummary = new HouseSummary();
-		houseSummary.setBackground(Color.decode("#e8dcdc"));
+		houseSummary.setBackground(houseBackgroundColour);
 
-		houseSummary.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e)
-			{
-				gameController.firePropertyChange(Events.HOUSE_SELECTED, null, null);
-				houseSummary.setBackground(Color.decode("#e8dcdc"));
-			}
-		});
+		houseSummary.addMouseListener(new HouseSummaryListener(gameController));
 		
 		gameController.addListener(this);
 
@@ -80,16 +64,17 @@ public class DiceSummaryPanel extends JPanel implements PropertyChangeListener
 		{
 		case Events.PLAYER_ADDED:
 			Player addedPlayer = (SimplePlayer) evt.getNewValue();
-			playerListModel.addElement(addedPlayer);
-			list.setSelectedValue(addedPlayer, true);
+			playerListModel.addElement(new PlayerListItem(addedPlayer));
+			list.setSelectedIndex(getIndexOfPlayer(addedPlayer));
 			break;
-			
+			 
 		case Events.PLAYER_REMOVED:
+			Player removePlayer = (SimplePlayer) evt.getOldValue();
 			int prevSelectedIndex = list.getSelectedIndex();
-			playerListModel.removeElement((SimplePlayer) evt.getOldValue());
+			playerListModel.remove(getIndexOfPlayer(removePlayer));
 			if(list.getModel().getSize() == 0)
 			{
-				houseSummary.setBackground(Color.decode("#e8dcdc"));
+				houseSummary.setBackground(houseBackgroundColour);
 				break;
 			}
 
@@ -97,6 +82,7 @@ public class DiceSummaryPanel extends JPanel implements PropertyChangeListener
 			list.setSelectedIndex(Math.min(prevSelectedIndex, lastIndex));
 
 			revalidate();
+			repaint();
 			break;
 			
 		case Events.PLAYER_SELECTED:
@@ -105,11 +91,44 @@ public class DiceSummaryPanel extends JPanel implements PropertyChangeListener
 			
 		case Events.HOUSE_SELECTED:
 			list.clearSelection();
+			houseSummary.setBackground(houseBackgroundColour);
+			break;
+			
+		case Events.HOUSE_ROLLED:
+			DicePair houseDicePair = (DicePair) evt.getNewValue();
+			
+			for (int i = 0; i < playerListModel.getSize(); i++)
+			{
+				Player player = playerListModel.getElementAt(i).getPlayer();
+				int bet = player.getBet();
+				DicePair playerDicePair = player.getResult();
+				int compareToResult = playerDicePair.compareTo(houseDicePair);
+				playerListModel.getElementAt(i).setWinnings(compareToResult < 0 ? -bet : bet);
+			}
+			
+			list.revalidate();
+			list.repaint();
+			break;
+			
+		default:
+			// do nothing
 			break;
 		}
 	}
 	
-	public JList<Player> getList()
+	private int getIndexOfPlayer(Player player)
+	{
+		for (int i = 0; i < playerListModel.getSize(); i++)
+		{
+			if(playerListModel.getElementAt(i).getPlayer().equals(player))
+			{
+				return i;
+			}
+		}
+		return -1; // no player found that matches
+	}
+	
+	public JList<PlayerListItem> getList()
 	{
 		return list;
 	}
