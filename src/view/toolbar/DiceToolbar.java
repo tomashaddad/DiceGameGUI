@@ -1,6 +1,5 @@
 package view.toolbar;
 
-import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -30,7 +29,6 @@ public class DiceToolbar extends JToolBar implements PropertyChangeListener
 		
 		this.gameController = gameController;
 		
-		setBackground(Color.decode("#B8C4BB"));
 		setFloatable(false);
 		
 		addPlayerButton = new JButton("Add player");
@@ -62,16 +60,27 @@ public class DiceToolbar extends JToolBar implements PropertyChangeListener
 		switch(event)
 		{
 		case Events.PLAYER_SELECTED:
-			togglePlayerButtons(true);
+			enablePlayerButtons(true);
 			break;
 			
 		case Events.PLAYER_REMOVED:
 			if (gameController.isPlayerListEmpty())
-				togglePlayerButtons(false);
+				enablePlayerButtons(false);
 			break;
 			
 		case Events.HOUSE_SELECTED:
-			togglePlayerButtons(false);
+			enablePlayerButtons(false);
+			break;
+			
+		case Events.HOUSE_ROLLING:
+			addPlayerButton.setEnabled(false);
+			enablePlayerButtons(false);
+			break;
+			
+		case Events.HOUSE_ROLLED:
+			addPlayerButton.setEnabled(true);
+			enablePlayerButtons(true);
+			break;
 			
 		default:
 			// do nothing
@@ -79,7 +88,7 @@ public class DiceToolbar extends JToolBar implements PropertyChangeListener
 		}
 	}
 	
-	public void togglePlayerButtons(boolean toggle)
+	public void enablePlayerButtons(boolean toggle)
 	{
 		removePlayerButton.setEnabled(toggle);
 		setBetButton.setEnabled(toggle);

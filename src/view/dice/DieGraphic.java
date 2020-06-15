@@ -8,9 +8,6 @@ public class DieGraphic extends JPanel
 {
 	private int value;
 	
-	public static final Color CASINO_GREEN = Color.decode("#35654d");
-	public static final Color CASINO_RED = Color.decode("#972a27");
-	
 	// these values are arbitrary
 	private static final double BORDER_MULTIPLIER = 0.03;
 	private static final double ARC_MULTIPLIER = 0.3;

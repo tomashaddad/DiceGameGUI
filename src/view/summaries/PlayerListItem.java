@@ -1,4 +1,4 @@
-package model;
+package view.summaries;
 
 import model.interfaces.Player;
 

@@ -3,7 +3,6 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -11,6 +10,7 @@ import javax.swing.SwingUtilities;
 import controller.game.GameController;
 import model.SimplePlayer;
 import model.interfaces.Player;
+import view.model.ViewModel;
 import view.toolbar.AddPlayerDialog;
 
 public class AddPlayerListener implements ActionListener
@@ -29,7 +29,7 @@ public class AddPlayerListener implements ActionListener
 	{
 		JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(dialog);
 
-		String id = String.valueOf(SimplePlayer.playerIDCounter++);
+		String id = String.valueOf(ViewModel.playerIDCounter++);
 		String playerName = dialog.getUsername();
 		int points = dialog.getPoints();
 		int bet = dialog.getBet();
@@ -38,7 +38,7 @@ public class AddPlayerListener implements ActionListener
 		
 		if (newPlayer.setBet(bet))
 		{
-			gameController.addNewPlayer(newPlayer, bet);
+			gameController.addPlayer(newPlayer, bet);
 			dialog.setVisible(false);
 		}
 		

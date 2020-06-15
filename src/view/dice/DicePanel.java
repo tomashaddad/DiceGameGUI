@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
+import constants.CasinoColour;
 import constants.Events;
 import controller.game.GameController;
 import model.SimplePlayer;
@@ -40,7 +41,7 @@ public class DicePanel extends JPanel implements PropertyChangeListener
 		layout = new CardLayout();
 		setLayout(layout);
 		
-		houseCard = new DicePairCard(DieGraphic.CASINO_RED);		
+		houseCard = new DicePairCard(CasinoColour.CASINO_RED);		
 		add(houseCard);
 		
 		gameController.addListener(this);
@@ -54,70 +55,67 @@ public class DicePanel extends JPanel implements PropertyChangeListener
 		switch(event)
 		{
 		case Events.PLAYER_ADDED:
-			Player addedPlayer = (SimplePlayer) evt.getNewValue();
-			String id = addedPlayer.getPlayerId();
-			DicePairCard card = new DicePairCard(DieGraphic.CASINO_GREEN);
-			
-			playerDicePanels.put(addedPlayer, card);
-			add(card, id);
-			layout.show(this, id);
-			
-			revalidate();
-			repaint();
+			playerAdded((SimplePlayer) evt.getNewValue());
 			break;
 			
 		case Events.PLAYER_SELECTED:
-			Player selectedPlayer = gameController.getSelectedPlayer();
-			String selectedPlayerID = selectedPlayer.getPlayerId();
-			layout.show(this, selectedPlayerID);
-			
-			revalidate();
-			repaint();
+			playerSelected(gameController.getSelectedPlayer());
+			break;
+
+		case Events.PLAYER_REMOVED:
+			removePlayer((SimplePlayer) evt.getOldValue());
+			break;
+
+		case Events.PLAYER_DIE_UPDATED:
+			Die die = gameController.getPlayerDie((SimplePlayer) evt.getNewValue());
+			DicePairCard playerPanel = playerDicePanels.get((SimplePlayer) evt.getNewValue());
+			updateCard(playerPanel, die);
 			break;
 
 		case Events.HOUSE_SELECTED:
+		case Events.HOUSE_ROLLING:
 			layout.first(this);
-			break;
-			
-		case Events.PLAYER_REMOVED:
-			remove(playerDicePanels.get((SimplePlayer) evt.getOldValue()));
-			playerDicePanels.remove((SimplePlayer) evt.getOldValue());
-			
-			revalidate();
-			repaint();
-			break;
-			
-		case Events.PLAYER_DIE_UPDATED:
-			Player updatedPlayer = (SimplePlayer) evt.getNewValue();
-			Die newPlayerDie = gameController.getPlayerDie(updatedPlayer);
-			DicePairCard playerPanel = playerDicePanels.get(updatedPlayer);
-			int playerDieValue = newPlayerDie.getValue();
-
-			if (newPlayerDie.getNumber() == 1)
-				playerPanel.getDie1().setValue(playerDieValue);
-			if (newPlayerDie.getNumber() == 2)
-				playerPanel.getDie2().setValue(playerDieValue);
-			
-			playerPanel.revalidate();
-			playerPanel.repaint();
-			break;
+			break;				
 		
 		case Events.HOUSE_DIE_UPDATED:
-			Die newHouseDie = (Die) evt.getNewValue();
-			int houseDieValue = newHouseDie.getValue();
-			
-			if (newHouseDie.getNumber() == 1)
-				houseCard.getDie1().setValue(houseDieValue);
-			if (newHouseDie.getNumber() == 2)
-				houseCard.getDie2().setValue(houseDieValue);
-			
-			houseCard.revalidate();
-			houseCard.repaint();
+			updateCard(houseCard, (Die) evt.getNewValue());
 			break;
 			
 		default:
 			// do nothing
 			break;
 		}
+		
+		revalidate();
+		repaint();
+	}
+	
+	private void playerAdded(Player player)
+	{
+		String id = player.getPlayerId();
+		DicePairCard card = new DicePairCard(CasinoColour.CASINO_GREEN);
+		
+		playerDicePanels.put(player, card);
+		add(card, id);
+		layout.show(this, id);
+	}
+	
+	private void playerSelected(Player player)
+	{
+		layout.show(this, player.getPlayerId());
+	}
+	
+	private void removePlayer(Player player)
+	{
+		remove(playerDicePanels.get(player));
+		playerDicePanels.remove(player);
+	}
+	
+	private void updateCard(DicePairCard card, Die die)
+	{
+		if (die.getNumber() == 1)
+			card.getDie1().setValue(die.getValue());
+		if (die.getNumber() == 2)
+			card.getDie2().setValue(die.getValue());
 	}
 }

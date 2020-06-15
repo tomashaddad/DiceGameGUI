@@ -4,9 +4,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import controller.game.GameController;
-import model.PlayerListItem;
 import model.interfaces.Player;
 import view.summaries.DiceSummaryPanel;
+import view.summaries.PlayerListItem;
 
 public class PlayerListListener implements ListSelectionListener
 {
