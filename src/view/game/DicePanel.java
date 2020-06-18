@@ -1,4 +1,4 @@
-package view.dice;
+package view.game;
 
 import java.awt.CardLayout;
 import java.beans.PropertyChangeEvent;
@@ -15,24 +15,20 @@ import model.SimplePlayer;
 import model.interfaces.Die;
 import model.interfaces.Player;
 
-/**
- * This class adopts a CardLayout, allowing the addition of multiple cards
+/* This class adopts a CardLayout, allowing the addition of multiple cards
  * which act as the different dice pair views for each player.
  * 
  * Navigation of each card is done by clicking the player name in the player
- * summary panel.
- * 
- * @author Tomas Haddad
- */
+ * summary panel. */
 
 @SuppressWarnings("serial")
 public class DicePanel extends JPanel implements PropertyChangeListener
 {
-	GameController gameController;	
-	CardLayout layout;
-	
+	private GameController gameController;	
+	private CardLayout layout;
+	private DicePairCard houseCard;
+
 	private Map<Player, DicePairCard> playerDicePanels = new HashMap<>();
-	DicePairCard houseCard;
 
 	public DicePanel(GameController gameController)
 	{
@@ -55,15 +51,15 @@ public class DicePanel extends JPanel implements PropertyChangeListener
 		switch(event)
 		{
 		case Events.PLAYER_ADDED:
-			playerAdded((SimplePlayer) evt.getNewValue());
+			addPlayerCard((SimplePlayer) evt.getNewValue());
 			break;
 			
 		case Events.PLAYER_SELECTED:
-			playerSelected(gameController.getSelectedPlayer());
+			showPlayerCard(gameController.getSelectedPlayer());
 			break;
 
 		case Events.PLAYER_REMOVED:
-			removePlayer((SimplePlayer) evt.getOldValue());
+			removePlayerCard((SimplePlayer) evt.getOldValue());
 			break;
 
 		case Events.PLAYER_DIE_UPDATED:
@@ -72,8 +68,9 @@ public class DicePanel extends JPanel implements PropertyChangeListener
 			updateCard(playerPanel, die);
 			break;
 
+
 		case Events.HOUSE_SELECTED:
-		case Events.HOUSE_ROLLING:
+		case Events.HOUSE_ROLLING: // switch to house automatically during house roll
 			layout.first(this);
 			break;				
 		
@@ -90,22 +87,21 @@ public class DicePanel extends JPanel implements PropertyChangeListener
 		repaint();
 	}
 	
-	private void playerAdded(Player player)
+	private void addPlayerCard(Player player)
 	{
-		String id = player.getPlayerId();
 		DicePairCard card = new DicePairCard(CasinoColour.CASINO_GREEN);
 		
 		playerDicePanels.put(player, card);
-		add(card, id);
-		layout.show(this, id);
+		add(card, player.getPlayerId());
+		layout.show(this, player.getPlayerId());
 	}
 	
-	private void playerSelected(Player player)
+	private void showPlayerCard(Player player)
 	{
 		layout.show(this, player.getPlayerId());
 	}
 	
-	private void removePlayer(Player player)
+	private void removePlayerCard(Player player)
 	{
 		remove(playerDicePanels.get(player));
 		playerDicePanels.remove(player);

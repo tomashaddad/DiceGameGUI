@@ -19,7 +19,8 @@ import view.model.ViewModel;
  * Each method does at least one of three things, if not all three:
  *  1. Announces a property change
  *  2. Updates the ViewModel
- *  3. Updates the GameEngine */
+ *  3. Updates the GameEngine 
+ */
 
 public class GameController
 {
@@ -36,10 +37,17 @@ public class GameController
 
 	public void addPlayer(Player player, int bet)
 	{
-		engine.addPlayer(player);
-		viewModel.addPlayer(player);
-		selectPlayer(player); // must be done before event firing
-		pcs.firePropertyChange(Events.PLAYER_ADDED, null, player);			
+		if (player.setBet(bet))
+		{
+			engine.addPlayer(player);
+			viewModel.addPlayer(player);
+			setSelectedPlayer(player); // must be done before event firing
+			pcs.firePropertyChange(Events.PLAYER_ADDED, null, player);
+		}
+		else
+		{
+			pcs.firePropertyChange(Events.BET_FAILED, null, null);
+		}
 	}
 
 	public void removePlayer(Player player)
@@ -48,25 +56,50 @@ public class GameController
 		viewModel.removePlayer(player);
 		pcs.firePropertyChange(Events.PLAYER_REMOVED, player, null);
 	}
+	
+	public void placeBet(Player player, int bet)
+	{
+		engine.placeBet(player, bet);
+		viewModel.setPlayerHasBet(player);
+		pcs.firePropertyChange(Events.BET_SET, null, player);
+	}
+	
+	public void resetBet(Player player)
+	{
+		player.resetBet();
+		viewModel.resetBet(player);
+		pcs.firePropertyChange(Events.BET_RESET, null, player);
+	}
+	
+	/* The player passed in to this method is the player currently selected
+	 * and set as the selected player in the ViewModel */
 
 	public void rollPlayer(Player player)
 	{
-		new Thread()
+		if (player.getBet() > 0)
 		{
-			@Override
-			public void run()
+			new Thread()
 			{
-				engine.rollPlayer(player, 100, 1000, 100, 50, 500, 50);
-			}
-		}.start();
+				@Override
+				public void run()
+				{
+					engine.rollPlayer(player, 100, 1000, 100, 50, 500, 50);
+				}
+			}.start();
+			
+			viewModel.setPlayerRolling(player);
+			pcs.firePropertyChange(Events.PLAYER_ROLLING, null, player);
+		}
 		
-		viewModel.setPlayerStatus(player, Status.ROLLING);
-		pcs.firePropertyChange(Events.PLAYER_ROLLING, null, player);
+		else
+		{
+			pcs.firePropertyChange(Events.ROLL_FAILED, null, null);
+		}
 	}
 
 	public void announcePlayerResult(Player player)
 	{
-		viewModel.setPlayerStatus(player, Status.ROLLED);
+		viewModel.setPlayerHasRolled(player);
 		pcs.firePropertyChange(Events.PLAYER_ROLLED, null, player);
 		
 		if (viewModel.haveAllPlayersRolled())
@@ -91,7 +124,17 @@ public class GameController
 
 	public void announceHouseResult(DicePair result)
 	{
-		pcs.firePropertyChange(Events.HOUSE_ROLLED, null, result);		
+		pcs.firePropertyChange(Events.HOUSE_ROLLED, null, result);
+		
+		for (Player player : engine.getAllPlayers())
+		{
+			if (player.getPoints() == 0)
+			{
+				removePlayer(player);
+			}
+		}
+		
+		viewModel.resetAllBets();
 	}
 
 	public void updatePlayerDie(Player player, Die die)
@@ -105,7 +148,7 @@ public class GameController
 		pcs.firePropertyChange(Events.HOUSE_DIE_UPDATED, null, die);
 	}
 	
-	public void selectPlayer(Player player)
+	public void setSelectedPlayer(Player player)
 	{
 		viewModel.setSelectedPlayer(player);
 		pcs.firePropertyChange(Events.PLAYER_SELECTED, null, null);
@@ -126,14 +169,24 @@ public class GameController
 		return viewModel.getPlayerDie(player);
 	}
 	
+	public String getPlayerStatus(Player player)
+	{
+		return viewModel.getPlayerStatus(player);
+	}
+	
 	public boolean isPlayerListEmpty()
 	{
 		return engine.getAllPlayers().isEmpty();
 	}
-
-	public String getPlayerStatus(Player player)
+	
+	public boolean isAnyPlayerRolling()
 	{
-		return viewModel.getPlayerStatus(player);
+		return viewModel.isAnyPlayerRolling();
+	}
+	
+	public boolean hasPlayerRolled(Player player)
+	{
+		return getPlayerStatus(player).equals(Status.ROLLED);
 	}
 	
 	public void addGameEngineCallback(GameEngineCallback callback)

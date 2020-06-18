@@ -7,7 +7,6 @@ import javax.swing.JDialog;
 
 public class CancelDialogListener implements ActionListener
 {
-	
 	private JDialog dialog;
 	
 	public CancelDialogListener(JDialog dialog)

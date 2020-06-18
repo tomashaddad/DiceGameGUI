@@ -1,4 +1,4 @@
-package view.dice;
+package view.game;
 
 import java.awt.*;
 import javax.swing.*;
@@ -30,7 +30,8 @@ public class DieGraphic extends JPanel
 		// needed to make corner arcs smooth
 		die.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		double translation = sideLength()*(1-SCALING_MULTIPLIER)/2; // leftover pixels after scaling /2
+		// translate the dice by half the leftover pixels once scaling is applied
+		double translation = sideLength() * (1 - SCALING_MULTIPLIER) / 2;
 		die.translate(translation, translation);
 		die.scale(SCALING_MULTIPLIER, SCALING_MULTIPLIER);
 		
@@ -65,7 +66,7 @@ public class DieGraphic extends JPanel
 		Point[] dots = DotPositions.getDotPositions(value);
 		 
 		/* Dividing the die side length by four (dieGridSize) splits the die into a 4x4
-		 * square. The intersections of those squares form a 3x3 grid where the dots are
+		 * grid. The intersections of the grid lines form define 3x3 points where the dots are
 		 * placed. Since graphics are drawn with the top left as the origin, the dots
 		 * need to be translated by their radius to centre them at their respective positions. */
 		
@@ -102,11 +103,6 @@ public class DieGraphic extends JPanel
 	private int getDotSize()
 	{
 		return (int) (sideLength() * DOT_MULTIPLIER);
-	}
-	
-	public int getValue()
-	{
-		return value;
 	}
 	
 	public void setValue(int value)

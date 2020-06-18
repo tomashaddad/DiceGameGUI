@@ -22,13 +22,36 @@ public class ViewModel
 
 	public void addPlayer(Player player)
 	{
-		playerStates.put(player, Status.NEW_PLAYER);
+		playerStates.put(player, Status.HAS_BET);
 		playerDies.put(player, null);
 	}
 
-	public void setBet(Player player)
+	public void setPlayerHasBet(Player player)
 	{
-		// TODO: Complete this method
+		playerStates.put(player, Status.HAS_BET);
+	}
+	
+	public void resetBet(Player player)
+	{
+		playerStates.put(player, Status.NO_BET);
+	}
+	
+	public void resetAllBets()
+	{
+		for (Map.Entry<Player, String> entry : playerStates.entrySet())
+		{
+			playerStates.put(entry.getKey(), Status.NO_BET);
+		}
+	}
+
+	public void setPlayerRolling(Player player)
+	{
+		playerStates.put(player, Status.ROLLING);
+	}
+	
+	public void setPlayerHasRolled(Player player)
+	{
+		playerStates.put(player, Status.ROLLED);
 	}
 
 	public void removePlayer(Player player)
@@ -56,12 +79,7 @@ public class ViewModel
 	{
 		return selectedPlayer;
 	}
-
-	public void setPlayerStatus(Player player, String status)
-	{
-		playerStates.put(player, status);
-	}
-
+	
 	public String getPlayerStatus(Player player)
 	{
 		return playerStates.get(player);
@@ -77,5 +95,10 @@ public class ViewModel
 			}
 		}
 		return true;
+	}
+	
+	public boolean isAnyPlayerRolling()
+	{
+		return playerStates.containsValue(Status.ROLLING);
 	}
 }

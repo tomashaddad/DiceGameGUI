@@ -1,4 +1,4 @@
-package view.dice;
+package view.game;
 
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import util.Rand;
 
 /* 
- * This class defines the "cards" cycled through in DicePanel
+ * This JPanel holds the two dice that constitute a house or player card
  *  */
 
 @SuppressWarnings("serial")
@@ -27,6 +27,8 @@ public class DicePairCard extends JPanel
 		add(die1);
 		add(die2);
 	}
+
+	/* Getters allow manipulation of die value (see DicePanel) */
 	
 	public DieGraphic getDie1()
 	{

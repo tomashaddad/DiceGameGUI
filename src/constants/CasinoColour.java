@@ -2,12 +2,11 @@ package constants;
 
 import java.awt.Color;
 
+/* Utility class to hold colours used in UI */
+
 public class CasinoColour
 {
-	private CasinoColour()
-	{
-		throw new IllegalStateException("Utility class");
-	}
+	private CasinoColour() { } // prevent instantiation
 	
 	public static final Color CASINO_GREEN = Color.decode("#35654d");
 	public static final Color CASINO_RED = Color.decode("#972a27");

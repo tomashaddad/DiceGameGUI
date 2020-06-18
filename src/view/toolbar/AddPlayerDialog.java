@@ -10,11 +10,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import controller.AddPlayerListener;
 import controller.CancelDialogListener;
@@ -41,7 +38,7 @@ public class AddPlayerDialog extends JDialog
 		pointsInput = new JSpinner(pointModel);
 		betInput = new JSpinner(betModel);
 		JButton okButton = new JButton("OK");
-		JButton cancelButton = new JButton("Cancel");		
+		JButton cancelButton = new JButton("Cancel");
 
 		okButton.addActionListener(new AddPlayerListener(this, gameController));
 		cancelButton.addActionListener(new CancelDialogListener(this));

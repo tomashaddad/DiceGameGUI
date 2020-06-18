@@ -6,17 +6,22 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import controller.PopulatePlayerListListener;
+import controller.game.GameController;
+
+/* Game menu populates the game with dummy data for easier testing */
+
 @SuppressWarnings("serial")
 public class GameMenu extends JMenuBar
 {
-	public GameMenu()
+	public GameMenu(GameController gameController)
 	{
-		JMenu file = new JMenu("File");
-		file.setMnemonic(KeyEvent.VK_F); // if you hold ALT+F it opens the FILE menu
-		JMenuItem exit = new JMenuItem("Exit");
-		exit.setMnemonic(KeyEvent.VK_E); // after opening file menu, ALT+E closes window
-		exit.addActionListener(e -> System.exit(0)); // TODO: LAMBDA!?!?!?
-		file.add(exit);
-		add(file);
+		JMenu options = new JMenu("Options");
+		options.setMnemonic(KeyEvent.VK_F);
+		JMenuItem populate = new JMenuItem("Populate");
+		populate.setMnemonic(KeyEvent.VK_P);
+		populate.addActionListener(new PopulatePlayerListListener(gameController));
+		options.add(populate);
+		add(options);
 	}
 }

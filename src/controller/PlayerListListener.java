@@ -10,8 +10,8 @@ import view.summaries.PlayerListItem;
 
 public class PlayerListListener implements ListSelectionListener
 {
-	GameController eventManager;
-	DiceSummaryPanel dsp;
+	private GameController eventManager;
+	private DiceSummaryPanel dsp;
 	
 	public PlayerListListener(GameController eventManager, DiceSummaryPanel dsp)
 	{
@@ -29,7 +29,7 @@ public class PlayerListListener implements ListSelectionListener
 		if(!e.getValueIsAdjusting() && listItem != null)
 		{
 			Player player = listItem.getPlayer();
-			eventManager.selectPlayer(player);
+			eventManager.setSelectedPlayer(player);
 		}
 	}
 }

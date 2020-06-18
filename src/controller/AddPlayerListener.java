@@ -3,10 +3,6 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
 import controller.game.GameController;
 import model.SimplePlayer;
 import model.interfaces.Player;
@@ -27,30 +23,14 @@ public class AddPlayerListener implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(dialog);
-
-		String id = String.valueOf(ViewModel.playerIDCounter++);
-		String playerName = dialog.getUsername();
+		String id = String.valueOf(ViewModel.playerIDCounter++); // player ID is a simple incrementing static variable
+		String name = dialog.getUsername();
 		int points = dialog.getPoints();
 		int bet = dialog.getBet();
 
-		Player newPlayer = new SimplePlayer(id, playerName, points);
+		Player player = new SimplePlayer(id, name, points);
 		
-		if (newPlayer.setBet(bet))
-		{
-			gameController.addPlayer(newPlayer, bet);
-			dialog.setVisible(false);
-		}
-		
-		else if (bet > points)
-		{
-			JOptionPane.showMessageDialog(frame, "You cannot set a bet higher than your points!");
-		}
-		
-		else
-		{
-			JOptionPane.showMessageDialog(frame, "You cannot set a bet of 0!");
-		}
-	
+		dialog.setVisible(false);
+		gameController.addPlayer(player, bet);
 	}
 }

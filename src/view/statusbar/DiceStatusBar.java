@@ -1,6 +1,7 @@
 package view.statusbar;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -11,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import constants.Events;
+import constants.Status;
 import controller.game.GameController;
 import model.SimplePlayer;
 import model.interfaces.Player;
@@ -18,26 +20,31 @@ import model.interfaces.Player;
 @SuppressWarnings("serial")
 public class DiceStatusBar extends JPanel implements PropertyChangeListener
 {
-	JLabel selectedPlayer;
-	JLabel playerStatus;
-	JLabel gameStatus;
+	private JLabel selectedPlayer;
+	private JLabel playerStatus;
 	
-	GameController gameController;
+	private static final String HOUSE_SELECTED = "<html>Selected player: <b>The HOUSE!</b></html>";
+	
+	private GameController gameController;
 	
 	public DiceStatusBar(GameController gameController)
 	{
 		this.gameController = gameController;
 		
-		setBackground(Color.decode("#B8C4BB"));
-		setBorder(BorderFactory.createLineBorder(Color.WHITE, 5));
-		setLayout(new GridLayout(0, 3));
+		setLayout(new GridLayout(0, 2));
 		
-		selectedPlayer = new JLabel("Selected player: The HOUSE!", SwingConstants.CENTER);
-		gameStatus = new JLabel("Game has not started!", SwingConstants.CENTER);
-		playerStatus = new JLabel("No player selected!", SwingConstants.CENTER);
+		setBackground(Color.WHITE);
+		setBorder(BorderFactory.createLineBorder(Color.WHITE, 10));
+		
+		Font font = new Font("Arial", Font.PLAIN, 16);
+		
+		selectedPlayer = new JLabel(HOUSE_SELECTED, SwingConstants.CENTER);
+		playerStatus = new JLabel("Game has not started!", SwingConstants.CENTER);
+		
+		selectedPlayer.setFont(font);
+		playerStatus.setFont(font);
 	
 		add(selectedPlayer);
-		add(gameStatus);
 		add(playerStatus);
 		
 		gameController.addListener(this);
@@ -48,23 +55,86 @@ public class DiceStatusBar extends JPanel implements PropertyChangeListener
 	{
 		String event = evt.getPropertyName();
 		
-		switch(event)
+		switch (event)
 		{
-		case Events.PLAYER_SELECTED:
-			Player player = gameController.getSelectedPlayer();
-			selectedPlayer.setText("Selected player: " + player.getPlayerName());
-			playerStatus.setText(player.getPlayerName() + " is currently " + gameController.getPlayerStatus(player));
-			revalidate();
-			repaint();
+		case Events.PLAYER_ADDED:
+			playerStatus.setText(
+					((SimplePlayer) evt.getNewValue()).getPlayerName()
+					+ " has joined the table!");
 			break;
 			
+		case Events.PLAYER_REMOVED:
+			if (gameController.isPlayerListEmpty())
+			{
+				selectedPlayer.setText(HOUSE_SELECTED);
+				break;
+			}
+			break;
+			
+		case Events.PLAYER_SELECTED:
+			selectedPlayer.setText("Selected player: " + gameController.getSelectedPlayer().getPlayerName());
+			setPlayerStatusText(gameController.getSelectedPlayer());
+			break;
+			
+		case Events.BET_RESET:
+			setPlayerStatusText(gameController.getSelectedPlayer());
+			break;
+		
 		case Events.PLAYER_ROLLING:
-			Player rollingPlayer = (SimplePlayer) evt.getNewValue();
-			gameStatus.setText(rollingPlayer.getPlayerName() + " just started rolling!");
+			playerStatus.setText(
+					((SimplePlayer) evt.getNewValue()).getPlayerName()
+					+ " has begun their roll!");
+			break;
+		
+		case Events.PLAYER_ROLLED:
+			playerStatus.setText(
+					((SimplePlayer) evt.getNewValue()).getPlayerName()
+					+ " just finished rolling!");
 			break;
 			
 		case Events.HOUSE_SELECTED:
-			selectedPlayer.setText("Selected player: The HOUSE!");
+			selectedPlayer.setText(HOUSE_SELECTED);
+			playerStatus.setText("Roll all players so that the house can roll!");
+			break;
+			
+		case Events.HOUSE_ROLLING:
+			selectedPlayer.setText(HOUSE_SELECTED);
+			playerStatus.setText("The house has begun their roll!");
+			break;
+		
+		case Events.HOUSE_ROLLED:
+			playerStatus.setText("The house has finished their roll!");
+			break;
+
+		default:
+			// do nothing
+			break;
+		}
+		revalidate();
+		repaint();
+	}
+	
+	private void setPlayerStatusText(Player player)
+	{
+		String status = gameController.getPlayerStatus(player);
+		String playerName = player.getPlayerName();
+		
+		switch (status)
+		{
+		case Status.HAS_BET:
+			playerStatus.setText(playerName + " has placed a bet and is waiting to roll!");
+			break;
+
+		case Status.NO_BET:
+			playerStatus.setText(playerName + " has not yet placed a bet ...");
+			break;
+
+		case Status.ROLLING:
+			playerStatus.setText(playerName + " is rolling!");
+			break;
+
+		case Status.ROLLED:
+			playerStatus.setText(playerName + " has rolled, and is waiting for others ...");
 			break;
 			
 		default:

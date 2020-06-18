@@ -1,10 +1,11 @@
-package view.dice;
+package view.game;
 
 import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
 import controller.game.GameController;
+import view.statusbar.DiceStatusBar;
 import view.toolbar.DiceToolbar;
 
 /* 
@@ -16,8 +17,9 @@ import view.toolbar.DiceToolbar;
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel
 {
-	DicePanel dicePanel;
-	DiceToolbar diceToolbar;
+	private DicePanel dicePanel;
+	private DiceToolbar diceToolbar;
+	private DiceStatusBar diceStatusBar;
 	
 	public GamePanel(GameController gameController)
 	{
@@ -25,8 +27,10 @@ public class GamePanel extends JPanel
 		
 		dicePanel = new DicePanel(gameController);
 		diceToolbar = new DiceToolbar(gameController);
+		diceStatusBar = new DiceStatusBar(gameController);
 		
 		add(diceToolbar, BorderLayout.NORTH);
-		add(dicePanel, BorderLayout.CENTER);		
+		add(dicePanel, BorderLayout.CENTER);
+		add(diceStatusBar, BorderLayout.SOUTH);
 	}
 }

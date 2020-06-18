@@ -1,13 +1,10 @@
-package view.dice;
+package view.game;
 
 import java.awt.Point;
 
-public class DotPositions
+public final class DotPositions
 {
-	private DotPositions()
-	{
-		throw new IllegalStateException("Utility class");
-	}
+	private DotPositions() { } // prevent instantiation
 	
 	/*
 	 * (-1, 1)   (0,-1)   (1,-1)
@@ -18,12 +15,14 @@ public class DotPositions
 	 * 
 	 * */
 	
-	private static final Point TOP_LEFT = new Point(-1, -1);
-	private static final Point TOP_RIGHT = new Point(1, -1);
-	private static final Point LEFT = new Point(-1, 0);
-	private static final Point CENTER = new Point(0, 0);
-	private static final Point RIGHT = new Point(1, 0);
-	private static final Point BOTTOM_LEFT = new Point(-1, 1);
+	// top and bottom not needed
+	
+	private static final Point TOP_LEFT 	= new Point(-1, -1);
+	private static final Point TOP_RIGHT 	= new Point(1, -1);
+	private static final Point LEFT 		= new Point(-1, 0);
+	private static final Point CENTER 		= new Point(0, 0);
+	private static final Point RIGHT 		= new Point(1, 0);
+	private static final Point BOTTOM_LEFT 	= new Point(-1, 1);
 	private static final Point BOTTOM_RIGHT = new Point(1, 1);
 	
 	private static final Point[] ONE = new Point[]

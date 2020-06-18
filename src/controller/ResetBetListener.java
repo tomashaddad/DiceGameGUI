@@ -5,11 +5,11 @@ import java.awt.event.ActionListener;
 
 import controller.game.GameController;
 
-public class RollListener implements ActionListener
+public class ResetBetListener implements ActionListener
 {
 	private GameController gameController;
 	
-	public RollListener(GameController gameController)
+	public ResetBetListener(GameController gameController)
 	{
 		this.gameController = gameController;
 	}
@@ -17,6 +17,6 @@ public class RollListener implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		gameController.rollPlayer(gameController.getSelectedPlayer());
+		gameController.resetBet(gameController.getSelectedPlayer());
 	}
 }
