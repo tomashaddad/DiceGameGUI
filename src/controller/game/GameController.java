@@ -55,6 +55,14 @@ public class GameController
 		engine.removePlayer(player);
 		viewModel.removePlayer(player);
 		pcs.firePropertyChange(Events.PLAYER_REMOVED, player, null);
+		
+		/* Necessary check so that if 2/3 players have rolled and player 3 is
+		 * removed, then the house should roll. */
+		
+		if (viewModel.haveAllPlayersRolled())
+		{
+			rollHouse();
+		}
 	}
 	
 	public void placeBet(Player player, int bet)

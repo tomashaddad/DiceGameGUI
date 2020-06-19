@@ -85,11 +85,6 @@ public class DiceSummaryPanel extends JPanel implements PropertyChangeListener
 			houseSummary.setBackground(Color.WHITE);
 			break;
 
-		case Events.BET_SET:
-		case Events.BET_RESET:
-			// included so that revalidate() and repaint() are called
-			break;
-
 		case Events.HOUSE_SELECTED:
 		case Events.HOUSE_ROLLING:		
 			list.clearSelection();

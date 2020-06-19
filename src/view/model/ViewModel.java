@@ -87,6 +87,14 @@ public class ViewModel
 
 	public boolean haveAllPlayersRolled()
 	{
+		/* Initial empty check is necessary to prevent the house
+		 * from rolling if removing the last player in the list */
+		
+		if (playerStates.isEmpty())
+		{
+			return false;
+		}
+		
 		for (String status : playerStates.values())
 		{
 			if (!status.equals(Status.ROLLED))

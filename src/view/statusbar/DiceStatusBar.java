@@ -39,7 +39,7 @@ public class DiceStatusBar extends JPanel implements PropertyChangeListener
 		Font font = new Font("Arial", Font.PLAIN, 16);
 		
 		selectedPlayer = new JLabel(HOUSE_SELECTED, SwingConstants.CENTER);
-		playerStatus = new JLabel("Game has not started!", SwingConstants.CENTER);
+		playerStatus = new JLabel("Gambler's Help: 1800 858 858", SwingConstants.CENTER);
 		
 		selectedPlayer.setFont(font);
 		playerStatus.setFont(font);
@@ -76,8 +76,12 @@ public class DiceStatusBar extends JPanel implements PropertyChangeListener
 			setPlayerStatusText(gameController.getSelectedPlayer());
 			break;
 			
+		case Events.BET_SET:
+			setPlayerStatusText(((SimplePlayer) evt.getNewValue()));
+			break;
+			
 		case Events.BET_RESET:
-			setPlayerStatusText(gameController.getSelectedPlayer());
+			setPlayerStatusText(((SimplePlayer) evt.getNewValue()));
 			break;
 		
 		case Events.PLAYER_ROLLING:
@@ -94,7 +98,7 @@ public class DiceStatusBar extends JPanel implements PropertyChangeListener
 			
 		case Events.HOUSE_SELECTED:
 			selectedPlayer.setText(HOUSE_SELECTED);
-			playerStatus.setText("Roll all players so that the house can roll!");
+			playerStatus.setText("Add and roll players so that the house can roll!");
 			break;
 			
 		case Events.HOUSE_ROLLING:

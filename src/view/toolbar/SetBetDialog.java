@@ -16,6 +16,7 @@ import controller.CancelDialogListener;
 import controller.SetBetListener;
 import controller.game.GameController;
 
+@SuppressWarnings("serial")
 public class SetBetDialog extends JDialog
 {
 	private JSpinner betInput;
@@ -31,7 +32,7 @@ public class SetBetDialog extends JDialog
 		
 		/* Minimum bet of 1 is assumed since players cannot be created with 0 or less
 		 * points, and players are removed automatically when they reach 0 points. */
-		SpinnerNumberModel pointModel = new SpinnerNumberModel(0, 1, maxBet, 1);
+		SpinnerNumberModel pointModel = new SpinnerNumberModel(1, 1, maxBet, 1);
 		
 		betInput = new JSpinner(pointModel);
 		JButton okButton = new JButton("OK");

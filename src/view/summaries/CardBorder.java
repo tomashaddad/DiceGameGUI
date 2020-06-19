@@ -11,7 +11,6 @@ import javax.swing.border.TitledBorder;
 /* Card border creation is needed in both DiceSummaryPanel (for house cards) and in the JList player
  * renderer class */
 
-@SuppressWarnings("serial")
 public final class CardBorder
 {
 	private CardBorder() { } // prevent instantiation
